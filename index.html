@@ -1,0 +1,923 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><meta name="apple-mobile-web-app-title" content="Dispatch Drill"><meta name="apple-mobile-web-app-capable" content="yes"><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>Alpine Dispatch Drill</title>
+<meta name="theme-color" content="#0A5B64">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#EDF2F1; --surface:#FFFFFF; --surface-2:#F4F8F7; --line:#D3DEDC; --line-2:#E3EBEA;
+  --ink:#0F2428; --ink-2:#3B5357; --muted:#657C80;
+  --accent:#0A5B64; --accent-ink:#FFFFFF; --accent-soft:#D5EAEA;
+  --window:#C08416; --bad:#BD3829; --bad-soft:#F7DDD8; --good:#1F7F55; --good-soft:#D6EEE1;
+  --block:#8C9C9E; --pin-ink:#FFFFFF; --shadow:0 -8px 30px rgba(15,36,40,.16);
+  --t0:#2F6FD0; --t1:#D2691E; --t2:#23875A; --t3:#B03F78; --t4:#7152C4; --t5:#977708; --t6:#12909C;
+  --f-display:"Barlow Condensed","Arial Narrow","Roboto Condensed",system-ui,sans-serif;
+  --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --lab:108px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0A1416; --surface:#111F22; --surface-2:#16282B; --line:#283C3F; --line-2:#1C2F32;
+    --ink:#E2EDED; --ink-2:#B3C6C8; --muted:#86A2A5;
+    --accent:#5BBEC7; --accent-ink:#052528; --accent-soft:#163A3E;
+    --window:#E3AA3E; --bad:#F07262; --bad-soft:#3A1D19; --good:#58C68C; --good-soft:#15342A;
+    --block:#6E8487; --pin-ink:#06171A; --shadow:0 -8px 30px rgba(0,0,0,.55);
+    --t0:#72A4F2; --t1:#F0934C; --t2:#52C08B; --t3:#E57DB1; --t4:#A68EF2; --t5:#D8B53E; --t6:#4FC7D2;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0A1416; --surface:#111F22; --surface-2:#16282B; --line:#283C3F; --line-2:#1C2F32;
+  --ink:#E2EDED; --ink-2:#B3C6C8; --muted:#86A2A5;
+  --accent:#5BBEC7; --accent-ink:#052528; --accent-soft:#163A3E;
+  --window:#E3AA3E; --bad:#F07262; --bad-soft:#3A1D19; --good:#58C68C; --good-soft:#15342A;
+  --block:#6E8487; --pin-ink:#06171A; --shadow:0 -8px 30px rgba(0,0,0,.55);
+  --t0:#72A4F2; --t1:#F0934C; --t2:#52C08B; --t3:#E57DB1; --t4:#A68EF2; --t5:#D8B53E; --t6:#4FC7D2;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font:400 15px/1.45 var(--f-body);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
+button:disabled{cursor:not-allowed}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+select,input[type=text]{height:44px;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:0 12px;font:500 15px var(--f-body)}
+.eyebrow{font:600 11px/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0}
+.linkbtn{color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:3px;font-size:14px}
+
+/* ---------- home ---------- */
+.home{max-width:600px;margin:0 auto;padding:30px 18px 60px;display:flex;flex-direction:column;gap:30px}
+.wordmark{font:700 68px/.84 var(--f-display);text-transform:uppercase;letter-spacing:-.005em;margin:12px 0 0}
+.wordmark span{display:block;color:var(--accent)}
+.lede{margin:14px 0 0;color:var(--ink-2);font-size:16.5px;max-width:44ch}
+.field{display:grid;gap:6px}
+.field label{font:600 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.cards{display:grid;gap:12px}
+.card{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;width:100%}
+.card:hover{border-color:var(--accent)}
+.shield{width:44px;height:50px;display:grid;place-items:center;padding-bottom:8px;font:700 18px/1 var(--f-display);letter-spacing:.02em;color:var(--accent-ink);background:var(--accent);clip-path:polygon(8% 0,92% 0,100% 16%,100% 60%,50% 100%,0 60%,0 16%)}
+.shield.az{background:var(--window);color:#1B1403}
+.cbody{display:grid;gap:2px;min-width:0}
+.cbody h3{margin:0;font:700 23px/1.05 var(--f-display);letter-spacing:.01em}
+.cbody .date{color:var(--ink-2);font-size:14.5px}
+.meta{font:500 10.5px/1.5 var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.best{text-align:right;font:700 30px/1 var(--f-display)}
+.best small{display:block;font:500 9.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.rules h2{font:700 22px var(--f-display);text-transform:uppercase;letter-spacing:.04em;margin:0 0 4px}
+.rule{display:grid;grid-template-columns:54px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-2)}
+.rule > b{font:700 34px/1 var(--f-display)}
+.rule h4{margin:0;font:600 16px var(--f-display);text-transform:uppercase;letter-spacing:.05em}
+.rule p{margin:4px 0 0;color:var(--ink-2);font-size:14px}
+.rule.zero > b{color:var(--bad)}
+.foot{font-size:12.5px;color:var(--muted);margin:0;max-width:60ch}
+
+/* ---------- game shell ---------- */
+.game{display:flex;flex-direction:column;height:100vh;height:100dvh}
+.gbar{flex:none;background:var(--surface);border-bottom:1px solid var(--line)}
+.gtop{display:flex;align-items:center;gap:10px;padding:10px 12px 8px}
+.iconbtn{width:38px;height:38px;flex:none;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;font:600 18px var(--f-body)}
+.gtitle{min-width:0;flex:1}
+.gtitle h2{margin:0;font:700 22px/1 var(--f-display);text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gtitle div{font:500 10.5px var(--f-mono);color:var(--muted);letter-spacing:.05em;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reads{display:flex;gap:6px;padding:0 12px 8px;overflow-x:auto}
+.read{flex:none;display:flex;align-items:baseline;gap:7px;padding:5px 10px;border-radius:8px;background:var(--surface-2);border:1px solid var(--line-2)}
+.read span{font:600 10px var(--f-mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.read b{font:700 17px/1 var(--f-display)}
+.read.alert{background:var(--bad-soft);border-color:transparent}
+.read.alert b,.read.alert span{color:var(--bad)}
+.tabs{display:flex;padding:0 4px}
+.tab{flex:1;text-align:center;padding:9px 2px 8px;font:600 14.5px var(--f-display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:2.5px solid transparent}
+.tab[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
+.tab i{font-style:normal;display:inline-grid;place-items:center;min-width:17px;height:17px;border-radius:9px;background:var(--bad);color:#fff;font:600 10px var(--f-mono);margin-left:4px;padding:0 4px;vertical-align:1px}
+.gmain{flex:1;min-height:0;overflow:auto;position:relative;overscroll-behavior:contain}
+.dock{flex:none;display:flex;gap:10px;align-items:center;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--surface);border-top:1px solid var(--line)}
+.btn{height:46px;padding:0 16px;border-radius:11px;border:1px solid var(--line);background:var(--surface);font:600 15px var(--f-display);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.btn.primary{flex:1;height:50px;background:var(--accent);color:var(--accent-ink);border-color:transparent;font-size:19px;letter-spacing:.07em}
+.btn[data-armed="1"]{border-color:var(--bad);color:var(--bad)}
+
+/* ---------- board ---------- */
+.tray{position:sticky;left:12px;max-width:calc(100vw - 24px);margin:10px 12px 0;padding:10px;border:1.5px dashed var(--bad);border-radius:12px;background:var(--bad-soft)}
+.tray-h{font:600 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--bad);margin-bottom:8px}
+.tray-list{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.jchip{flex:none;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:7px 10px;min-width:150px;display:grid;gap:2px}
+.jchip b{font-weight:600;font-size:13.5px}
+.jchip span{font-size:12px;color:var(--ink-2)}
+.new{font:600 9.5px var(--f-mono);font-style:normal;color:var(--accent-ink);background:var(--accent);padding:1px 4px;border-radius:3px;margin-left:4px;vertical-align:1px}
+.grid{position:relative;margin-top:10px}
+.ruler{position:sticky;top:0;z-index:6;display:flex;height:26px;background:var(--surface);border-bottom:1px solid var(--line);border-top:1px solid var(--line)}
+.corner{position:sticky;left:0;z-index:7;flex:none;width:var(--lab);background:var(--surface);border-right:1px solid var(--line);font:600 10px var(--f-mono);color:var(--muted);display:flex;align-items:center;padding-left:12px;letter-spacing:.1em}
+.ticks{position:relative;flex:none}
+.tick{position:absolute;top:0;bottom:0;border-left:1px solid var(--line);font:500 10px var(--f-mono);color:var(--muted);padding:6px 0 0 4px;white-space:nowrap}
+.row{display:flex;height:84px;border-bottom:1px solid var(--line)}
+.who{position:sticky;left:0;z-index:5;flex:none;width:var(--lab);background:var(--surface);border-right:1px solid var(--line);border-left:4px solid var(--tc);padding:8px 6px 6px 9px;display:flex;flex-direction:column;gap:3px;align-items:flex-start}
+.who b{font:700 17px/1 var(--f-display);letter-spacing:.02em}
+.who small{font:500 9.5px var(--f-mono);color:var(--muted);letter-spacing:.04em}
+.eq{display:flex;gap:3px;flex-wrap:wrap}
+.eqc{font:600 8.5px/1 var(--f-mono);padding:2px 4px;border-radius:3px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2);letter-spacing:.03em}
+.eqc.hot{border-color:var(--bad);color:var(--bad);background:var(--bad-soft)}
+.lane{position:relative;flex:none;background-color:var(--surface-2);background-image:linear-gradient(90deg,var(--line-2) 1px,transparent 1px);overflow:hidden}
+.job{position:absolute;top:8px;height:46px;border-radius:7px;background:color-mix(in oklab,var(--tc) 15%,var(--surface));border:1px solid color-mix(in oklab,var(--tc) 45%,transparent);border-left:4px solid var(--tc);padding:4px 6px 0 6px;overflow:hidden;font-size:12px;line-height:1.25;z-index:2;display:block}
+.job.helper{border-style:dashed;background:color-mix(in oklab,var(--tc) 6%,var(--surface))}
+.job.lost{border-color:var(--bad);border-left-color:var(--bad);background:var(--bad-soft)}
+.job.sel{box-shadow:0 0 0 2px var(--ink);z-index:4}
+.job .c{display:flex;gap:5px;align-items:baseline;font-weight:600;white-space:nowrap;overflow:hidden;padding-right:2px}
+.jid{font:600 10px var(--f-mono);color:var(--muted)}
+.job .s{display:block;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.flags{position:absolute;right:3px;bottom:3px;display:flex;gap:2px}
+.flg{font:600 8.5px/1 var(--f-mono);padding:2px 3px;border-radius:3px;background:var(--surface);border:1px solid var(--line);color:var(--ink-2)}
+.flg.hot{border-color:var(--bad);color:#fff;background:var(--bad)}
+.real{position:absolute;top:59px;height:6px;border-radius:3px;background:color-mix(in oklab,var(--tc) 65%,transparent);z-index:1}
+.over{position:absolute;top:59px;height:6px;border-radius:0 3px 3px 0;background:repeating-linear-gradient(135deg,var(--bad) 0 3px,transparent 3px 6px);z-index:1}
+.drv{position:absolute;top:56px;font:500 9.5px var(--f-mono);color:var(--muted);transform:translateX(-100%);padding-right:4px;white-space:nowrap}
+.win{position:absolute;top:73px;height:3px;border-radius:2px;background:var(--window);opacity:.85}
+.blk{position:absolute;top:5px;bottom:5px;border-radius:7px;border:1px dashed var(--block);background:repeating-linear-gradient(135deg,color-mix(in oklab,var(--block) 22%,transparent) 0 5px,transparent 5px 10px);font:500 9.5px/1.25 var(--f-mono);color:var(--muted);padding:4px 5px;overflow:hidden;z-index:1;pointer-events:none}
+.blk.callout{border-color:var(--bad);color:var(--bad);font-weight:600;background:repeating-linear-gradient(135deg,color-mix(in oklab,var(--bad) 13%,transparent) 0 5px,transparent 5px 10px);z-index:3;display:flex;justify-content:flex-end}
+.stop{position:absolute;top:0;bottom:0;border-left:2px solid var(--bad);z-index:3;pointer-events:none}
+.stop span{position:absolute;top:3px;left:4px;font:600 8.5px var(--f-mono);color:var(--bad);white-space:nowrap;letter-spacing:.05em}
+.key{position:sticky;left:0;max-width:100vw;padding:12px 14px 20px;display:flex;flex-wrap:wrap;gap:8px 16px;font-size:12.5px;color:var(--ink-2)}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:22px;height:6px;border-radius:3px}
+
+/* ---------- map ---------- */
+.mapwrap{padding:12px 12px 24px;max-width:600px;margin:0 auto}
+.map{display:block;width:100%;height:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.m-ring{fill:none;stroke:var(--line);stroke-width:1.2;stroke-dasharray:3 4}
+.m-ringl{font:500 9px var(--f-mono);fill:var(--muted)}
+.m-city{font:500 10px var(--f-body);fill:var(--muted)}
+.m-cdot{fill:var(--muted)}
+.m-route{fill:none;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round;opacity:.85}
+.m-route.help{stroke-dasharray:4 4;opacity:.6}
+.m-pin{cursor:pointer}
+.m-pin circle{stroke:var(--surface);stroke-width:2}
+.m-pin text{font:600 9px var(--f-mono);fill:var(--pin-ink);pointer-events:none}
+.m-pin.un circle{fill:var(--surface);stroke:var(--bad);stroke-width:2.5}
+.m-pin.un text{fill:var(--bad)}
+.m-shop{fill:var(--ink)}
+.m-shopl{font:600 10px var(--f-mono);fill:var(--ink)}
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin-top:10px}
+.lg{display:flex;gap:9px;align-items:center;font-size:13px;background:var(--surface);border:1px solid var(--line-2);border-radius:9px;padding:7px 10px}
+.lg b{font:700 15px var(--f-display)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--tc);flex:none}
+
+/* ---------- prompts / chart ---------- */
+.stack{padding:12px 12px 28px;max-width:680px;margin:0 auto;display:grid;gap:12px}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.pcard.done{opacity:.62}
+.pfrom{font:500 10.5px var(--f-mono);color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+.pcard h3{font:700 22px/1.08 var(--f-display);margin:6px 0 6px}
+.pcard p{margin:0 0 12px;color:var(--ink-2)}
+.prow{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.pjob{font:600 12px var(--f-mono);padding:6px 9px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2)}
+.check{margin-left:auto;font:600 13px var(--f-display);text-transform:uppercase;letter-spacing:.05em;padding:7px 11px;border-radius:8px;border:1px solid var(--line)}
+.check[aria-pressed="true"]{background:var(--good-soft);color:var(--good);border-color:transparent}
+.intro{background:var(--accent-soft);border-radius:14px;padding:14px 16px;font-size:14.5px}
+.intro b{font-weight:600}
+.chead h3{font:700 19px var(--f-display);text-transform:uppercase;letter-spacing:.04em;margin:8px 0 2px}
+.chead p{margin:0 0 8px;color:var(--ink-2);font-size:13.5px}
+.tscroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:7px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line-2)}
+tr:last-child td{border-bottom:0}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--surface)}
+thead th{font:600 10.5px var(--f-mono);letter-spacing:.05em;color:var(--muted);text-transform:uppercase}
+th.on,td.on{background:var(--accent-soft)}
+td.src{font:500 11px var(--f-mono);color:var(--muted)}
+
+/* ---------- sheet ---------- */
+.sheetback{position:fixed;inset:0;background:rgba(6,18,20,.42);z-index:40}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;max-width:640px;margin:0 auto;max-height:86vh;max-height:86dvh;overflow:auto;background:var(--surface);border-radius:18px 18px 0 0;box-shadow:var(--shadow);padding:0 16px calc(22px + env(safe-area-inset-bottom));animation:up .18s ease-out}
+@keyframes up{from{transform:translateY(18px)}to{transform:none}}
+.grab{position:sticky;top:0;background:var(--surface);padding:12px 0 10px;display:flex;align-items:flex-start;gap:10px;z-index:2;border-bottom:1px solid var(--line-2)}
+.sh-t{flex:1;min-width:0}
+.sh-t h3{margin:0;font:700 24px/1.05 var(--f-display)}
+.sh-t div{font:500 10.5px/1.5 var(--f-mono);color:var(--muted);margin-top:4px;letter-spacing:.03em}
+.sec{padding:12px 0;border-bottom:1px solid var(--line-2)}
+.sec:last-child{border-bottom:0}
+.sec h4{margin:0 0 8px;font:600 10.5px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.lines{margin:0;padding:0;list-style:none;display:grid;gap:5px}
+.lines li{display:flex;gap:9px}
+.lines li::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--tc);margin-top:8px;flex:none}
+.tagrow{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font:600 11px var(--f-mono);padding:4px 7px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);letter-spacing:.02em}
+.tag.hot{background:var(--bad-soft);border-color:transparent;color:var(--bad)}
+.tag.ok{background:var(--good-soft);border-color:transparent;color:var(--good)}
+.tag.dim{color:var(--muted);border-style:dashed}
+.kv{display:flex;justify-content:space-between;gap:10px;align-items:baseline;padding:6px 0}
+.kv span{color:var(--ink-2)}
+.kv b{font:700 18px var(--f-display)}
+.status{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;background:var(--good-soft);color:var(--good)}
+.status b{font:700 18px var(--f-display)}
+.status.bad{background:var(--bad-soft);color:var(--bad)}
+.note{padding:11px 13px;border-radius:10px;background:var(--accent-soft);font-size:14px;margin-top:12px}
+.note b{display:block;font:600 10.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px}
+.tchip{flex:none;min-width:116px;border:1px solid var(--line);border-top:3px solid var(--tc);border-radius:11px;padding:7px 10px;background:var(--surface-2);display:flex;flex-direction:column;gap:2px}
+.tchip.slim{min-width:0;padding:8px 12px}
+.tchip b{font:700 16px/1.1 var(--f-display)}
+.tchip span{font-size:11.5px;color:var(--ink-2);white-space:nowrap}
+.tchip .no{color:var(--bad)}
+.tchip .yes{color:var(--good)}
+.tchip[aria-pressed="true"]{background:var(--surface);box-shadow:0 0 0 2px var(--accent)}
+.tchip:disabled{opacity:.45}
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper button{width:52px;height:46px;border-radius:10px;border:1px solid var(--line);font:600 14px var(--f-mono);background:var(--surface-2)}
+.stepper output{flex:1;text-align:center;font:700 26px var(--f-display)}
+.minis{display:flex;gap:8px;margin-top:8px}
+.mini{flex:1;height:40px;border-radius:9px;border:1px solid var(--line);font:600 13px var(--f-display);text-transform:uppercase;letter-spacing:.05em;text-align:center}
+.plist{margin:0;padding-left:18px;display:grid;gap:4px;color:var(--ink-2)}
+
+/* ---------- results ---------- */
+.results{min-height:100vh;min-height:100dvh}
+.res{max-width:640px;margin:0 auto;padding:14px 16px 60px;display:grid;gap:22px}
+.rtop{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.score{display:flex;align-items:flex-end;gap:10px;margin-top:6px}
+.score b{font:700 132px/.78 var(--f-display);letter-spacing:-.02em}
+.score span{font:600 24px var(--f-display);color:var(--muted);padding-bottom:6px}
+.verdict{font:700 24px var(--f-display);text-transform:uppercase;letter-spacing:.05em;color:var(--accent);margin:10px 0 0}
+.verdict.bad{color:var(--bad)}
+.bars{display:grid;gap:12px}
+.bar{display:grid;grid-template-columns:128px 1fr 60px;gap:10px;align-items:center}
+.bar label{font:600 13.5px var(--f-display);text-transform:uppercase;letter-spacing:.05em}
+.track{height:10px;border-radius:5px;background:var(--line-2);overflow:hidden}
+.fill{height:100%;background:var(--accent);border-radius:5px}
+.bar output{text-align:right;font:700 19px var(--f-display)}
+.bar output small{font:500 12px var(--f-display);color:var(--muted)}
+.cmp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cmpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 11px}
+.cmpi span{display:block;font:600 9.5px var(--f-mono);letter-spacing:.07em;color:var(--muted);text-transform:uppercase}
+.cmpi b{font:700 23px/1.2 var(--f-display)}
+.cmpi.you{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.rsec h3{font:700 19px var(--f-display);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px}
+.rsec > p{margin:0 0 10px;color:var(--ink-2);font-size:14px}
+.ded{display:grid;gap:8px}
+.di{display:grid;grid-template-columns:40px 1fr;gap:10px;background:var(--surface);border:1px solid var(--line-2);border-radius:11px;padding:10px 12px}
+.di > b{font:700 19px/1.15 var(--f-display);color:var(--bad)}
+.di.good > b{color:var(--good)}
+.di p{margin:0 0 3px;font-size:14px}
+.zero{background:var(--bad-soft);color:var(--bad);border-radius:12px;padding:12px 14px}
+.zero p{margin:4px 0 0;color:var(--ink)}
+.post{display:grid;grid-template-columns:1fr auto;gap:8px}
+.lb{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:10px}
+.lbr{display:grid;grid-template-columns:30px 1fr auto;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line-2);align-items:center}
+.lbr:last-child{border-bottom:0}
+.lbr i{font:600 12px var(--f-mono);font-style:normal;color:var(--muted)}
+.lbr b{font:700 22px/1 var(--f-display)}
+.lbr small{display:block;font:500 10.5px var(--f-mono);color:var(--muted)}
+.lbempty{padding:12px;color:var(--ink-2);font-size:14px;margin:0}
+.ractions{display:flex;gap:8px;flex-wrap:wrap}
+.banner{background:var(--window);color:#1B1403;font:600 13px var(--f-body);padding:8px 12px;text-align:center}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media (min-width:760px){ .wordmark{font-size:88px} .row{height:84px} }
+</style>
+
+<div id="home"></div>
+<div id="game" class="game" hidden>
+  <div id="banner" class="banner" hidden>Showing the best board found for this day. Reset to play for a score.</div>
+  <header class="gbar">
+    <div class="gtop">
+      <button class="iconbtn" data-act="home" aria-label="Back to scenarios">‹</button>
+      <div class="gtitle"><h2 id="gTitle"></h2><div id="gDate"></div></div>
+    </div>
+    <div class="reads" id="reads" aria-live="polite"></div>
+    <nav class="tabs" role="tablist" id="tabs"></nav>
+  </header>
+  <main class="gmain" id="gmain"></main>
+  <footer class="dock">
+    <button class="btn" data-act="reset" id="resetBtn">Reset</button>
+    <button class="btn primary" data-act="lock">Lock the board</button>
+  </footer>
+</div>
+<div id="results" class="results" hidden></div>
+<div id="sheetBack" class="sheetback" data-act="close" hidden></div>
+<aside id="sheet" class="sheet" role="dialog" aria-modal="true" hidden></aside>
+
+<script type="application/json" id="bundle">{"scenarios":[{"id":"wa-carpet-0729","market":"WA","date":"2026-07-29","dow":3,"title":"WA Carpet","blurb":"","techs":[{"id":"68191116","name":"Jesus A.","full":"Jesus A. Rodriguez","dept":"CCT","title":"CCT-400 Senior Technician","pay":"Commission","chart":"jesusa","skills":["CC Commercial","CC Furniture & Uph","CC Leather","CC Tech","CC Tile, Stone & Grout","CCT Super Truck","DeepCore Urine Recovery","VMT","VMT Dryer Vent"],"implied":["VM Tech"],"truck":"WA CC Big Super Carpet WATER On Board(No-Portable)","water":true,"portable":false,"crb":true,"blocks":[]},{"id":"100927504","name":"Oliver","full":"Oliver Johnson","dept":"CCT","title":"CCT-300 Lead Technician","pay":"Commission","chart":"oliver","skills":["CC Commercial","CC Furniture & Uph","CC Leather","CC Portable","CC Tech","CC Tile, Stone & Grout","CC Wood Floor Cleaning","DeepCore Urine Recovery"],"implied":[],"truck":"WA CC New Super Carpet( NO WATER on truck)","water":false,"portable":true,"crb":true,"blocks":[]},{"id":"208512616","name":"Beck","full":"Kristian Beck","dept":"CCT","title":"CCT-200 Technician","pay":"Commission","chart":"beck","rules":["residential_only"],"skills":["CC Furniture & Uph","CC Leather","CC Tech","CC Tile, Stone & Grout","CC Wood Floor Cleaning"],"implied":[],"truck":"WA CC Big Super Carpet WATER On Board(No-Portable)","water":true,"portable":false,"crb":true,"blocks":[{"start":420,"end":480,"label":"Isaiah to meet and do walk through last job today"}]},{"id":"88382804","name":"Elijah","full":"Elijah Chapman","dept":"CCT","title":"CCT-200 Technician","pay":"Commission","chart":"std","skills":["-Estimator PW","-Estimator VM","CC Furniture & Uph","CC Leather","CC Tech","DeepCore Urine Recovery"],"implied":[],"truck":"WA CC Big Super Carpet WATER On Board(No-Portable)","water":true,"portable":false,"crb":true,"blocks":[]},{"id":"171095274","name":"Enrique","full":"Enrique Martinez","dept":"CCT","title":"CCT-100 Trainee","pay":"Hourly","chart":"enrique","skills":["- Portable","CC Furniture & Uph","CC Leather","CC Tech","CC Tile, Stone & Grout","DeepCore Urine Recovery"],"implied":[],"truck":"WA CC New Super Carpet( NO WATER on truck)","water":false,"portable":true,"crb":false,"blocks":[]},{"id":"211706725","name":"Connor","full":"Connor Coloma","dept":"CCT","title":"CCT-100 Trainee","pay":"Hourly","chart":"connor","skills":["CC Furniture & Uph","CC Tech"],"implied":[],"truck":"WA CC New Super Carpet( NO WATER on truck)","water":false,"portable":false,"crb":false,"blocks":[{"start":420,"end":480,"label":"Isaiah to meet you last job"},{"start":810,"end":870,"label":"no more"}]},{"id":"216212350","name":"Joe","full":"Joe Slade","dept":"CCT","title":"CCT-100 Trainee","pay":"Hourly","chart":"std","maxJobs":2,"skills":[],"implied":["CC Tech"],"truck":"WA CC New Super Carpet( NO WATER on truck)","water":false,"portable":false,"crb":false,"blocks":[]}],"jobs":[{"id":"J01","type":"WA CC - Commercial","cat":"carpetcom","city":"Seattle","lat":47.5748,"lon":-122.37493,"customer":"Commercial \u00b7 office suites","commercialCustomer":true,"lines":["Commercial carpet"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":true,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["CC Commercial","CC Tech"],"tags":[],"win":[480,510],"start":480,"dur":240,"tech":"208512616","helper":null,"invoice":975,"noCharge":false,"summary":"","stJob":210157168},{"id":"J02","type":"WA CC 04 Areas","cat":"carpet","city":"Everett","lat":47.94958,"lon":-122.26323,"customer":"Sorensen residence","commercialCustomer":false,"lines":["Carpet \u00b7 4 areas","In-home area rugs \u00b7 82 sq ft","Add-ons: GreenShield protector"],"scope":{"areas":4,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":82.0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":["GreenShield protector"]},"req":["CC Tech"],"tags":["! Reschedule Customer"],"win":[480,540],"start":480,"dur":150,"tech":"171095274","helper":null,"invoice":431,"noCharge":false,"summary":"","stJob":214582773},{"id":"J03","type":"WA CC 04 Areas","cat":"carpet","city":"Kirkland","lat":47.67076,"lon":-122.19864,"customer":"Adeyemi residence","commercialCustomer":false,"lines":["Carpet \u00b7 4 areas","Add-ons: deodorizer"],"scope":{"areas":4,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":["deodorizer"]},"req":["CC Tech"],"tags":[],"win":[480,540],"start":480,"dur":150,"tech":"211706725","helper":null,"invoice":468,"noCharge":false,"summary":"","stJob":214616548},{"id":"J04","type":"WA CC 05 Areas","cat":"carpet","city":"Redmond","lat":47.70664,"lon":-122.10545,"customer":"Gallagher residence","commercialCustomer":false,"lines":["Carpet \u00b7 7 areas","Add-ons: deodorizer"],"scope":{"areas":7,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":["deodorizer"]},"req":["CC Tech"],"tags":[],"win":[480,540],"start":480,"dur":150,"tech":"100927504","helper":null,"invoice":667,"noCharge":false,"summary":"","stJob":214702565},{"id":"J05","type":"WA CC 02 Areas","cat":"carpet","city":"Auburn","lat":47.32364,"lon":-122.20791,"customer":"Ibarra residence","commercialCustomer":false,"lines":["Carpet \u00b7 3 areas","Add-ons: GreenShield protector, deodorizer"],"scope":{"areas":3,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":["GreenShield protector","deodorizer"]},"req":["CC Tech"],"tags":[],"win":[480,540],"start":480,"dur":130,"tech":"68191116","helper":null,"invoice":470,"noCharge":false,"summary":"","stJob":214734181},{"id":"J06","type":"WA CC 05 Areas","cat":"carpet","city":"Burien","lat":47.488,"lon":-122.34744,"customer":"Ibarra residence","commercialCustomer":false,"lines":["Carpet \u00b7 5 areas"],"scope":{"areas":5,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["CC Tech"],"tags":[],"win":[480,540],"start":480,"dur":150,"tech":"216212350","helper":null,"invoice":410,"noCharge":false,"summary":"","stJob":215159268},{"id":"J07","type":"WA CC 04 Areas","cat":"carpet","city":"Sammamish","lat":47.62652,"lon":-122.02353,"customer":"Dunmore residence","commercialCustomer":false,"lines":["Carpet \u00b7 4 areas","Add-ons: GreenShield protector, deodorizer"],"scope":{"areas":4,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":["GreenShield protector","deodorizer"]},"req":["CC Tech"],"tags":[],"win":[480,540],"start":480,"dur":150,"tech":"88382804","helper":null,"invoice":548,"noCharge":false,"summary":"","stJob":215248999},{"id":"J08","type":"WA CC 07 Areas","cat":"carpet","city":"Seattle","lat":47.63586,"lon":-122.40098,"customer":"Pham residence","commercialCustomer":false,"lines":["Carpet \u00b7 7 areas","In-home area rugs \u00b7 21 sq ft","DeepCore urine recovery \u00b7 4 spots","Add-ons: deodorizer"],"scope":{"areas":7,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":21.0,"deepcore":4,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":["deodorizer"]},"req":["CC Tech","DeepCore Urine Recovery"],"tags":[],"win":[660,780],"start":630,"dur":180,"tech":"216212350","helper":null,"invoice":963,"noCharge":false,"summary":"TRAINING APPROVED by Elizabeth: Joe Slade may run DeepCore Urine Recovery on this job with a DeepCore-certified trainer riding along.","stJob":213559910,"training":{"tech":"216212350","skill":"DeepCore Urine Recovery","by":"Elizabeth (training)","text":"TRAINING APPROVED by Elizabeth: Joe Slade may run DeepCore Urine Recovery on this job with a DeepCore-certified trainer riding along."}},{"id":"J09","type":"WA CC 08 Areas","cat":"carpet","city":"Medina","lat":47.6349,"lon":-122.23279,"customer":"Gallagher residence","commercialCustomer":false,"lines":["Carpet \u00b7 9 areas","Full chairs \u00b7 3","Sofas \u00b7 2","In-home area rugs \u00b7 85 sq ft","Add-ons: GreenShield protector, deodorizer"],"scope":{"areas":9,"closet":false,"furn":{"fullchair":3,"sofa":2},"tile":0,"comTile":false,"wood":0,"rug":85.0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":["GreenShield protector","deodorizer"]},"req":["CC Tech"],"tags":["!**WAITLIST"],"win":[600,720],"start":630,"dur":180,"tech":"211706725","helper":null,"invoice":2084,"noCharge":false,"summary":"","stJob":214247441},{"id":"J10","type":"WA CC 03 Areas","cat":"carpet","city":"Seattle","lat":47.62927,"lon":-122.32211,"customer":"Holloway residence","commercialCustomer":false,"lines":["Carpet \u00b7 1 area","Add-ons: deodorizer"],"scope":{"areas":1,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":["deodorizer"]},"req":["CC Tech"],"tags":["! Specific Tech"],"win":[660,780],"start":660,"dur":120,"tech":"171095274","helper":null,"invoice":403,"noCharge":false,"summary":"","stJob":214498021},{"id":"J11","type":"WA CC - Commercial","cat":"carpetcom","city":"Fall City","lat":47.56767,"lon":-121.90339,"customer":"Commercial \u00b7 office suites","commercialCustomer":true,"lines":["Commercial tile & grout"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":true,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":true,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["CC Commercial","CC Tech","CC Tile, Stone & Grout"],"tags":[],"win":[660,780],"start":660,"dur":180,"tech":"100927504","helper":null,"invoice":772,"noCharge":false,"summary":"","stJob":214732304},{"id":"J12","type":"WA CC 05 Areas","cat":"carpet","city":"Maple Valley","lat":47.39612,"lon":-121.99397,"customer":"Castillo residence","commercialCustomer":false,"lines":["Carpet \u00b7 8 areas","In-home area rugs \u00b7 80 sq ft","FiberRevive\u2122 (CRB machine)","Add-ons: GreenShield protector"],"scope":{"areas":8,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":80.0,"deepcore":0,"crb":true,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":["GreenShield protector"]},"req":["CC Tech"],"tags":["! Do not Move"],"win":[660,780],"start":660,"dur":150,"tech":"68191116","helper":null,"invoice":943,"noCharge":false,"summary":"","stJob":214782694},{"id":"J13","type":"WA CC 06 Areas","cat":"carpet","city":"Issaquah","lat":47.53596,"lon":-122.05669,"customer":"Nakamura residence","commercialCustomer":false,"lines":["Carpet \u00b7 6 areas","Add-ons: GreenShield protector, deodorizer"],"scope":{"areas":6,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":["GreenShield protector","deodorizer"]},"req":["CC Tech"],"tags":[],"win":[660,780],"start":660,"dur":180,"tech":"88382804","helper":null,"invoice":822,"noCharge":false,"summary":"","stJob":215082852},{"id":"J14","type":"WA CC Furniture","cat":"carpet","city":"Redmond","lat":47.7205,"lon":-122.10668,"customer":"Mercer residence","commercialCustomer":false,"lines":["Dining chairs \u00b7 16","L-shape sectional \u00b7 1","Add-ons: Bioesque sanitizer, pillows"],"scope":{"areas":0,"closet":false,"furn":{"dining":16,"lshape":1},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":["Bioesque sanitizer","pillows"]},"req":["CC Tech"],"tags":[],"win":[720,840],"start":720,"dur":180,"tech":"208512616","helper":null,"invoice":1211,"noCharge":false,"summary":"","stJob":215144425},{"id":"J15","type":"WA CC 06 Areas","cat":"carpet","city":"Seattle","lat":47.67189,"lon":-122.3832,"customer":"Lindqvist residence","commercialCustomer":false,"lines":["Carpet \u00b7 6 areas"],"scope":{"areas":6,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["CC Tech"],"tags":["! Portable"],"win":[780,900],"start":780,"dur":180,"tech":"171095274","helper":null,"invoice":507,"noCharge":false,"summary":"","stJob":214715882},{"id":"J16","type":"WA CC Area Rugs","cat":"carpet","city":"Seattle","lat":47.67682,"lon":-122.28927,"customer":"Sato residence","commercialCustomer":false,"lines":["In-home area rug cleaning (whole job)"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":1.0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["CC Tech"],"tags":[],"win":[780,900],"start":810,"dur":120,"tech":"216212350","helper":null,"invoice":378,"noCharge":false,"summary":"","stJob":214579557},{"id":"J17","type":"WA CC 07 Areas","cat":"carpet","city":"Buckley","lat":47.15725,"lon":-122.01189,"customer":"Brennan residence","commercialCustomer":false,"lines":["Carpet \u00b7 7 areas","Tile & grout \u00b7 60 sq ft"],"scope":{"areas":7,"closet":false,"furn":{},"tile":60.0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["CC Tech","CC Tile, Stone & Grout"],"tags":[],"win":[840,960],"start":840,"dur":180,"tech":"68191116","helper":null,"invoice":656,"noCharge":false,"summary":"","stJob":214823272},{"id":"J18","type":"WA CC Furniture","cat":"carpet","city":"Medina","lat":47.63254,"lon":-122.23932,"customer":"Takahashi residence","commercialCustomer":false,"lines":["L-shape sectionals \u00b7 2"],"scope":{"areas":0,"closet":false,"furn":{"lshape":2},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["CC Tech"],"tags":[],"win":[840,960],"start":840,"dur":180,"tech":"88382804","helper":null,"invoice":1493,"noCharge":false,"summary":"","stJob":215276649},{"id":"J19","type":"WA CC 06 Areas","cat":"carpet","city":"Bellevue","lat":47.5536,"lon":-122.13902,"customer":"Ruiz residence","commercialCustomer":false,"lines":["Carpet \u00b7 10 areas (incl. walk-in closet)","Add-ons: deodorizer"],"scope":{"areas":10,"closet":true,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":["deodorizer"]},"req":["CC Tech"],"tags":[],"win":[840,960],"start":900,"dur":180,"tech":"208512616","helper":null,"invoice":1003,"noCharge":false,"summary":"","stJob":215204971}],"prompts":[{"id":"p1","from":"Board check \u00b7 4:05 PM","title":"Joe Slade is over his job cap","body":"Joe has 3 jobs tomorrow and his board is blocked at 2. Move what doesn't fit. The Seattle job needs DeepCore: either a certified tech runs it, or Joe runs it with a certified trainer riding along, like the note on the job says.","jobs":["J06","J08","J16"]},{"id":"p2","from":"Invoice review \u00b7 4:20 PM","title":"Connor's Medina job is booked way short","body":"The invoice is in: Carpet \u00b7 9 areas; Full chairs \u00b7 3; Sofas \u00b7 2; In-home area rugs \u00b7 85 sq ft. It's booked for 3 hours. Size it off the booking chart for whoever runs it, then fix everything it pushes.","jobs":["J09"]},{"id":"p3","from":"Board check \u00b7 4:30 PM","title":"Beck is on a commercial job","body":"Beck starts tomorrow on a commercial carpet job in Seattle. Beck's board stays residential. Get it to a tech with the commercial skill, and don't leave anyone without work.","jobs":["J01"]}],"dateLabel":"Wednesday, July 29"},{"id":"wa-duct-0811","market":"WA","date":"2026-08-11","dow":2,"title":"WA Air Duct","blurb":"","techs":[{"id":"43398111","name":"Ben","full":"Ben Stewart","dept":"VMT","title":"VMT-300 Lead Technician","pay":"Commission","chart":"ben","notes":["Monday afternoons: time restraint (stop time to confirm with Eric; not scored yet)"],"skills":["- Portable","VM Commercial","VM Tech","VM WA Washington","VMT","VMT Airflow Testing","VMT Dryer Vent"],"implied":[],"truck":"WA VM - No portable Ducts/Dryer (Cab-Over)","water":false,"portable":false,"crb":false,"blocks":[]},{"id":"66815666","name":"Jesus R.","full":"Jesus Rodriguez","dept":"VMT","title":"VMT-400 Senior Technician","pay":"Commission","chart":"jesusr","skills":["- Portable","VM Commercial","VM Portable","VM Tech","VM WA Washington","VMT","VMT Airflow Testing","VMT Dryer Vent"],"implied":[],"truck":"WA VM Air Ducts/ Dryer (Dodge)","water":false,"portable":true,"crb":false,"blocks":[{"start":420,"end":1050,"label":"CALL OUT \u00b7 sick","callout":true}]},{"id":"3075","name":"Steve","full":"Steve Kropf","dept":"VMT","title":"VMT-400 Senior Technician","pay":"Commission","chart":"steve","skills":["- Portable","-Estimator VM","-PM Project Manager","VAX'd","VM Commercial","VM Portable","VM Tech","VM UVGI","VM Unsoot","VM WA Washington","VMT","VMT Airflow Testing","VMT Dryer Vent","VMT NADCA","VMT Trouble shoot"],"implied":[],"truck":"WA VM Air Ducts/ Dryer (Dodge)","water":false,"portable":true,"crb":false,"blocks":[]},{"id":"213365876","name":"Maverick","full":"Maverick Simon","dept":"VMT","title":"VMT-100 Trainee","pay":"Hourly","chart":"maverick","notes":["Tuesday\u2013Saturday schedule: no jobs Mondays"],"skills":[],"implied":["VM Tech"],"truck":"WA VM Air Ducts/ Dryer (Dodge)","water":false,"portable":false,"crb":false,"blocks":[]},{"id":"216747139","name":"Rob","full":"Rob Ratchford","dept":"VMT","title":"VMT-100 Trainee","pay":"Hourly","chart":"std","skills":[],"implied":["VM Tech"],"truck":"WA VM Air Ducts/ Dryer (Dodge)","water":false,"portable":false,"crb":false,"blocks":[]}],"jobs":[{"id":"J01","type":"WA VM Diamond 4001-4500","cat":"duct","city":"Mercer Island","lat":47.57059,"lon":-122.23557,"customer":"Ibarra residence","commercialCustomer":true,"lines":["Diamond duct cleaning \u00b7 4,001\u20134,500 sq ft","Additional furnace \u00b7 2","Difficult access (attic/crawl)"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":4500,"pkg":"Diamond","dv":null,"dvAddon":false,"furnaces":2,"access":true,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["VM Tech"],"tags":["! Do not Move"],"win":[480,540],"start":480,"dur":420,"tech":"43398111","helper":null,"invoice":1565,"noCharge":false,"summary":"","stJob":215248416},{"id":"J02","type":"- Booked Estimate (Sean)","cat":"ductcom","city":"Shoreline","lat":47.76961,"lon":-122.376,"customer":"Commercial \u00b7 retail center","commercialCustomer":true,"lines":["Commercial dryer vents \u00b7 26"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":true,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":26,"comDuctSqft":0,"addons":[]},"req":["VM Commercial","VM Tech"],"tags":[],"win":[480,540],"start":480,"dur":350,"tech":"3075","helper":null,"invoice":1300,"noCharge":false,"summary":"","stJob":215487888},{"id":"J03","type":"WA VM Essential 2501-3000","cat":"duct","city":"Darrington","lat":48.27695,"lon":-121.60463,"customer":"Oyelaran residence","commercialCustomer":false,"lines":["Essential duct cleaning \u00b7 2,501\u20133,000 sq ft","Dryer vent (bundled with ducts)"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":3000,"pkg":"Essential","dv":null,"dvAddon":true,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["VM Tech"],"tags":[],"win":[480,600],"start":480,"dur":210,"tech":"213365876","helper":null,"invoice":860,"noCharge":false,"summary":"","stJob":215511420},{"id":"J04","type":"WA VM Diamond 1501-2000","cat":"duct","city":"Snohomish","lat":47.93688,"lon":-122.11048,"customer":"Sato residence","commercialCustomer":false,"lines":["Diamond duct cleaning \u00b7 1,501\u20132,000 sq ft","Dryer vent (bundled with ducts)","Difficult access (attic/crawl)"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":2000,"pkg":"Diamond","dv":null,"dvAddon":true,"furnaces":0,"access":true,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["VM Tech"],"tags":["! Requested AM"],"win":[480,540],"start":480,"dur":210,"tech":"66815666","helper":null,"invoice":1045,"noCharge":false,"summary":"","stJob":215550963},{"id":"J05","type":"WA VM Essential 2001-2500","cat":"duct","city":"Lake Stevens","lat":47.97397,"lon":-122.07359,"customer":"Lindqvist residence","commercialCustomer":false,"lines":["Essential duct cleaning \u00b7 2,001\u20132,500 sq ft","Dryer vent (bundled with ducts)","Exhaust grills \u00b7 4"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":2500,"pkg":"Essential","dv":null,"dvAddon":true,"furnaces":0,"access":false,"grills":4,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["VM Tech"],"tags":["! Reschedule Customer","! Do not Move"],"win":[720,840],"start":720,"dur":180,"tech":"213365876","helper":null,"invoice":765,"noCharge":false,"summary":"","stJob":215192932},{"id":"J06","type":"WA VM Essential 2001-2500","cat":"duct","city":"Woodinville","lat":47.79043,"lon":-122.12749,"customer":"Kowalski residence","commercialCustomer":false,"lines":["Essential duct cleaning \u00b7 2,001\u20132,500 sq ft"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":2500,"pkg":"Essential","dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["VM Tech"],"tags":[],"win":[720,840],"start":720,"dur":180,"tech":"66815666","helper":null,"invoice":665,"noCharge":false,"summary":"","stJob":215610753},{"id":"J07","type":"WA VM-Dryer Vent Only (Under10')","cat":"dv","city":"Mill Creek","lat":47.87022,"lon":-122.19235,"customer":"Takahashi residence","commercialCustomer":false,"lines":["Dryer vent only \u00b7 under 10 ft"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":"under10","dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["VM Tech"],"tags":["!**WAITLIST"],"win":[720,960],"start":900,"dur":60,"tech":"213365876","helper":null,"invoice":309,"noCharge":false,"summary":"","stJob":215581160},{"id":"J08","type":"WA VM-Dryer Vent Only (Under10')","cat":"dv","city":"Kirkland","lat":47.73849,"lon":-122.18776,"customer":"Okafor residence","commercialCustomer":false,"lines":["Dryer vent only \u00b7 under 10 ft"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":"under10","dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["VM Tech"],"tags":[],"win":[720,960],"start":900,"dur":60,"tech":"43398111","helper":null,"invoice":300,"noCharge":false,"summary":"","stJob":215648151},{"id":"J09","type":"WA VM-Dryer Vent Only (Under10')","cat":"dv","city":"Woodinville","lat":47.79463,"lon":-122.12904,"customer":"Takahashi residence","commercialCustomer":false,"lines":["Dryer vent only \u00b7 under 10 ft"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":"under10","dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["VM Tech"],"tags":[],"win":[720,960],"start":900,"dur":60,"tech":"66815666","helper":null,"invoice":300,"noCharge":false,"summary":"","stJob":215683080},{"id":"J10","type":"New booking","cat":"duct","city":"Bothell","lat":47.7712,"lon":-122.1985,"customer":"Whitaker residence","commercialCustomer":false,"lines":["Diamond duct cleaning \u00b7 1,501\u20132,000 sq ft","Dryer vent (bundled with ducts)"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":2000,"pkg":"Diamond","dv":null,"dvAddon":true,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["VM Tech"],"tags":[],"win":[720,840],"start":720,"dur":180,"tech":null,"helper":null,"invoice":null,"noCharge":false,"summary":"","isNew":true,"stJob":null}],"prompts":[{"id":"p1","from":"Text from Jesus R. \u00b7 6:40 AM","title":"Jesus Rodriguez called out sick","body":"His three jobs need a tech: Snohomish (Requested AM), Woodinville, Woodinville. Any job left on his row counts as a lost job.","jobs":["J04","J06","J09"]},{"id":"p2","from":"Invoice review \u00b7 7:05 AM","title":"Maverick's day doesn't fit","body":"Maverick runs Darrington \u2192 Lake Stevens (Do Not Move) \u2192 Mill Creek. Darrington came back as essential duct cleaning \u00b7 2,501\u20133,000 sq ft plus a bundled dryer vent, and it's booked for 3.5 hours. Check his whole day against his column on the booking chart.","jobs":["J03"]},{"id":"p3","from":"New booking \u00b7 7:15 AM","title":"Diamond duct cleaning in Bothell","body":"1,501\u20132,000 sq ft Diamond with a bundled dryer vent. The customer can take a 12\u20132 arrival. It's in Unassigned \u2014 find it the best home and book the right length.","jobs":["J10"]}],"dateLabel":"Tuesday, August 11"},{"id":"az-0904","market":"AZ","date":"2026-09-04","dow":5,"title":"AZ Carpet + Air Duct","blurb":"","techs":[{"id":"9647834","name":"Austin","full":"Austin Davis","dept":"VMT","title":"VMT-500 Territory Lead","pay":"Hourly","chart":"austin","hardStop":{"dow":5,"min":900,"label":"Friday hard stop 3:00 PM"},"skills":["- Portable","- Service Manager","-PM Project Manager","VAX'd","VM Commercial","VM Portable","VM Tech","VM UVGI","VMT","VMT Dryer Vent","VMT Trouble shoot"],"implied":[],"truck":"AZ VM Arizona Air Ducts/Dryer","water":false,"portable":true,"crb":false,"blocks":[{"start":900,"end":1020,"label":"NO MORE DO NOT MOVE"},{"start":630,"end":690,"label":"late start"}]},{"id":"172483685","name":"Trevor","full":"Trevor Huffman","dept":"VMT","title":"VMT-100 Trainee","pay":"Hourly","chart":"trevor","skills":["VM Tech"],"implied":[],"truck":"AZ VM Arizona Air Ducts/Dryer","water":false,"portable":false,"crb":false,"blocks":[]},{"id":"209028461","name":"Dominic","full":"Dominic Bustamante","dept":"CCT","title":"CCT-100 Trainee","pay":"Hourly","chart":"dominic","skills":["CC Furniture & Uph","CC Leather","CC Power Scruber","CC Tile, Stone & Grout","DeepCore Urine Recovery"],"implied":["CC Tech"],"truck":"AZ CC Arizona Carpet/Tile/Furniture","water":false,"portable":false,"crb":false,"blocks":[]},{"id":"9579146","name":"Isaiah","full":"Isaiah Brown","dept":"FSS","title":"Field Services Supervisor","pay":"Salary","chart":"isaiah","skills":["- Portable","-Estimator CC","-Estimator CC Commercial","-Estimator VM","-Estimator VM Commercial","CC Commercial","CC Furniture & Uph","CC Leather","CC Tile, Stone & Grout","CC Wood Floor Cleaning","VAX'd","VM Commercial","VM Tech","VM UVGI","VMT","VMT Dryer Vent","VMT Thermostat","VMT Trouble shoot"],"implied":["CC Tech","- Service Manager"],"truck":"AZ Customer Experience","water":false,"portable":true,"crb":false,"blocks":[]}],"jobs":[{"id":"J01","type":"AZ CC 04","cat":"carpet","city":"Chandler","lat":33.21987,"lon":-111.79753,"customer":"Gallagher residence","commercialCustomer":false,"lines":["Carpet \u00b7 3 areas","Full chair \u00b7 1","Add-ons: GreenShield protector, deodorizer"],"scope":{"areas":3,"closet":false,"furn":{"fullchair":1},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":["GreenShield protector","deodorizer"]},"req":["CC Tech"],"tags":["! Requested Tech"],"win":[480,540],"start":480,"dur":150,"tech":"9579146","helper":null,"invoice":454,"noCharge":false,"summary":"","stJob":216674916},{"id":"J02","type":"AZ CC Furniture","cat":"carpet","city":"Maricopa","lat":33.08517,"lon":-112.04739,"customer":"Albright residence","commercialCustomer":false,"lines":["Carpet \u00b7 1 area","Full chair \u00b7 1"],"scope":{"areas":1,"closet":false,"furn":{"fullchair":1},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["CC Furniture & Uph","CC Tech"],"tags":[],"win":[480,540],"start":480,"dur":120,"tech":"209028461","helper":null,"invoice":249,"noCharge":false,"summary":"","stJob":216750057},{"id":"J03","type":"AZ VM Diamond 0-1500","cat":"duct","city":"Chandler","lat":33.23088,"lon":-111.84318,"customer":"Nakamura residence","commercialCustomer":false,"lines":["Diamond duct cleaning \u00b7 0\u20131,500 sq ft","Dryer vent (bundled with ducts)","Difficult access (attic/crawl)"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":1500,"pkg":"Diamond","dv":null,"dvAddon":true,"furnaces":0,"access":true,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["VM Tech"],"tags":["! Do not Move"],"win":[660,780],"start":660,"dur":180,"tech":"172483685","helper":null,"invoice":772,"noCharge":false,"summary":"","stJob":216005348},{"id":"J04","type":"AZ CC Furniture","cat":"carpet","city":"Phoenix","lat":33.73443,"lon":-112.13462,"customer":"Oyelaran residence","commercialCustomer":false,"lines":["U-shape sectional \u00b7 1"],"scope":{"areas":0,"closet":false,"furn":{"ushape":1},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["CC Furniture & Uph","CC Tech"],"tags":[],"win":[660,780],"start":660,"dur":160,"tech":"209028461","helper":null,"invoice":413,"noCharge":false,"summary":"","stJob":216751860},{"id":"J05","type":"- Service Manager","cat":"service","city":"Phoenix","lat":33.34562,"lon":-111.98093,"customer":"Pham residence","commercialCustomer":true,"lines":["Service manager visit (no charge)"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["- Service Manager"],"tags":[],"win":[660,780],"start":660,"dur":140,"tech":"9579146","helper":null,"invoice":0,"noCharge":false,"summary":"","stJob":216847721},{"id":"J06","type":"- Booked Estimate (Tech)","cat":"ductcom","city":"Phoenix","lat":33.37544,"lon":-111.97802,"customer":"Commercial \u00b7 HOA common areas","commercialCustomer":true,"lines":["Commercial duct cleaning \u00b7 3,300 sq ft"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":true,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":3300.0,"addons":[]},"req":["VM Commercial","VM Tech"],"tags":[],"win":[660,780],"start":720,"dur":300,"tech":"9647834","helper":null,"invoice":1308,"noCharge":false,"summary":"","stJob":216581368},{"id":"J07","type":"AZ CC Furniture","cat":"carpet","city":"Litchfield Park","lat":33.50228,"lon":-112.36471,"customer":"Ibarra residence","commercialCustomer":false,"lines":["Carpet \u00b7 1 area","Dining chairs \u00b7 7","Full chairs \u00b7 2","Sofa \u00b7 1"],"scope":{"areas":1,"closet":false,"furn":{"dining":7,"fullchair":2,"sofa":1},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["CC Furniture & Uph","CC Tech"],"tags":[],"win":[780,900],"start":840,"dur":120,"tech":"209028461","helper":null,"invoice":439,"noCharge":false,"summary":"","stJob":216754668},{"id":"J08","type":"* CC Estimate Residential","cat":"estimate","city":"Phoenix","lat":33.65567,"lon":-112.0389,"customer":"Sato residence","commercialCustomer":false,"lines":["In-home estimate"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":null,"pkg":null,"dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["-Estimator CC"],"tags":[],"win":[840,960],"start":840,"dur":60,"tech":"9579146","helper":null,"invoice":0,"noCharge":false,"summary":"","stJob":217077755},{"id":"J09","type":"New booking","cat":"duct","city":"Mesa","lat":33.4262,"lon":-111.771,"customer":"Quintero residence","commercialCustomer":false,"lines":["Diamond duct cleaning \u00b7 1,501\u20132,000 sq ft"],"scope":{"areas":0,"closet":false,"furn":{},"tile":0,"comTile":false,"wood":0,"rug":0,"deepcore":0,"crb":false,"com":false,"comSqft":0,"sqft":2000,"pkg":"Diamond","dv":null,"dvAddon":false,"furnaces":0,"access":false,"grills":0,"coil":false,"comDV":0,"comDuctSqft":0,"addons":[]},"req":["VM Tech"],"tags":["! Requested AM"],"win":[480,540],"start":480,"dur":180,"tech":null,"helper":null,"invoice":null,"noCharge":false,"summary":"","isNew":true,"stJob":null}],"prompts":[{"id":"p1","from":"Board check \u00b7 4:10 PM","title":"Austin can't finish the Phoenix commercial job","body":"Austin has a hard stop at 3:00 PM on Fridays and a late-start block until 11:30 tomorrow. His Phoenix commercial duct job (3,300 sq ft) is booked 12:00\u20135:00 PM. Get it covered by someone with the commercial skill.","jobs":["J06"]},{"id":"p2","from":"Invoice review \u00b7 4:25 PM","title":"Dominic's Litchfield Park job is booked short","body":"The invoice is in: Carpet \u00b7 1 area; Dining chairs \u00b7 7; Full chairs \u00b7 2; Sofa \u00b7 1. It's booked for 2 hours. Resize it and check his route: Maricopa \u2192 Phoenix \u2192 Litchfield Park.","jobs":["J07"]},{"id":"p3","from":"New booking \u00b7 4:40 PM","title":"Diamond duct cleaning in Mesa, Requested AM","body":"1,501\u20132,000 sq ft Diamond, 8\u20139 AM arrival, tagged Requested AM. It's in Unassigned. Trevor's Chandler job is Do Not Move \u2014 plan around it.","jobs":["J09"]}],"dateLabel":"Friday, September 4"}],"zones":[{"m":"WA","city":"Edmonds","lat":47.8091,"lon":-122.3522,"minutes":14,"band":"0\u201315 min","sector":"Local","source":"tech drives","jobs":116,"on_guide":true},{"m":"WA","city":"Marysville","lat":48.067,"lon":-122.1538,"minutes":37,"band":"35\u201345 min","sector":"North","source":"tech drives","jobs":24,"on_guide":true},{"m":"WA","city":"Bothell","lat":47.8001,"lon":-122.2015,"minutes":23,"band":"20\u201325 min","sector":"Local","source":"tech drives","jobs":135,"on_guide":true},{"m":"WA","city":"Kirkland","lat":47.6903,"lon":-122.1987,"minutes":35,"band":"35\u201345 min","sector":"East","source":"tech drives","jobs":115,"on_guide":true},{"m":"WA","city":"Mukilteo","lat":47.9069,"lon":-122.3042,"minutes":23,"band":"20\u201325 min","sector":"Local","source":"tech drives","jobs":35,"on_guide":true},{"m":"WA","city":"Mountlake Terrace","lat":47.8001,"lon":-122.3226,"minutes":8,"band":"0\u201315 min","sector":"Local","source":"model","jobs":128,"on_guide":true},{"m":"WA","city":"Lynnwood","lat":47.8275,"lon":-122.2686,"minutes":14,"band":"0\u201315 min","sector":"Local","source":"tech drives","jobs":85,"on_guide":true},{"m":"AZ","city":"Gilbert","lat":33.3223,"lon":-111.7242,"minutes":26,"band":"20\u201325 min","sector":"Local","source":"tech drives","jobs":25,"on_guide":true},{"m":"WA","city":"Seattle","lat":47.6365,"lon":-122.3314,"minutes":37,"band":"35\u201345 min","sector":"West","source":"tech drives","jobs":657,"on_guide":true},{"m":"WA","city":"Tacoma","lat":47.2718,"lon":-122.4265,"minutes":66,"band":"1 hr 10+","sector":"South","source":"tech drives","jobs":27,"on_guide":true},{"m":"WA","city":"Kent","lat":47.3884,"lon":-122.1873,"minutes":66,"band":"1 hr 10+","sector":"South","source":"tech drives","jobs":35,"on_guide":true},{"m":"AZ","city":"Phoenix","lat":33.5145,"lon":-112.0502,"minutes":33,"band":"35\u201345 min","sector":"Local","source":"tech drives","jobs":63,"on_guide":true},{"m":"WA","city":"Sammamish","lat":47.6007,"lon":-122.0246,"minutes":65,"band":"1 hr 10+","sector":"East","source":"tech drives","jobs":60,"on_guide":true},{"m":"WA","city":"Monroe","lat":47.8622,"lon":-121.9647,"minutes":44,"band":"35\u201345 min","sector":"North","source":"tech drives","jobs":18,"on_guide":true},{"m":"WA","city":"Mill Creek","lat":47.8539,"lon":-122.2054,"minutes":26,"band":"20\u201325 min","sector":"Local","source":"tech drives","jobs":38,"on_guide":true},{"m":"WA","city":"Snoqualmie","lat":47.5349,"lon":-121.8743,"minutes":71,"band":"1 hr 10+","sector":"South","source":"tech drives","jobs":18,"on_guide":true},{"m":"WA","city":"Shoreline","lat":47.7634,"lon":-122.3391,"minutes":18,"band":"20\u201325 min","sector":"Local","source":"tech drives","jobs":89,"on_guide":true},{"m":"WA","city":"Burien","lat":47.4758,"lon":-122.3435,"minutes":60,"band":"1 hr","sector":"South","source":"tech drives","jobs":22,"on_guide":true},{"m":"AZ","city":"Gold Canyon","lat":33.3631,"lon":-111.4691,"minutes":41,"band":"35\u201345 min","sector":"Southeast","source":"model","jobs":5,"on_guide":false},{"m":"AZ","city":"Scottsdale","lat":33.6255,"lon":-111.8921,"minutes":27,"band":"20\u201325 min","sector":"Local","source":"tech drives","jobs":90,"on_guide":true},{"m":"WA","city":"Everett","lat":47.9161,"lon":-122.2175,"minutes":25,"band":"20\u201325 min","sector":"Local","source":"tech drives","jobs":91,"on_guide":true},{"m":"WA","city":"Bellevue","lat":47.6046,"lon":-122.1551,"minutes":52,"band":"50\u201355 min","sector":"East","source":"tech drives","jobs":139,"on_guide":true},{"m":"WA","city":"Lake Stevens","lat":48.0068,"lon":-122.0807,"minutes":45,"band":"35\u201345 min","sector":"North","source":"tech drives","jobs":29,"on_guide":true},{"m":"WA","city":"Snohomish","lat":47.8765,"lon":-122.0942,"minutes":33,"band":"35\u201345 min","sector":"North","source":"tech drives","jobs":57,"on_guide":true},{"m":"WA","city":"Gig Harbor","lat":47.3213,"lon":-122.5971,"minutes":72,"band":"1 hr 10+","sector":"South","source":"model","jobs":6,"on_guide":true},{"m":"AZ","city":"Tempe","lat":33.4159,"lon":-111.9208,"minutes":36,"band":"35\u201345 min","sector":"Local","source":"tech drives","jobs":17,"on_guide":true},{"m":"WA","city":"Issaquah","lat":47.5557,"lon":-122.0364,"minutes":59,"band":"1 hr","sector":"East","source":"tech drives","jobs":45,"on_guide":true},{"m":"WA","city":"Woodinville","lat":47.7526,"lon":-122.1142,"minutes":37,"band":"35\u201345 min","sector":"East","source":"tech drives","jobs":46,"on_guide":true},{"m":"WA","city":"Camano","lat":48.1761,"lon":-122.5312,"minutes":61,"band":"1 hr","sector":"North","source":"model","jobs":6,"on_guide":true},{"m":"WA","city":"Duvall","lat":47.7315,"lon":-121.9589,"minutes":54,"band":"50\u201355 min","sector":"East","source":"tech drives","jobs":12,"on_guide":true},{"m":"WA","city":"Mercer Island","lat":47.5661,"lon":-122.2314,"minutes":59,"band":"1 hr","sector":"East","source":"tech drives","jobs":29,"on_guide":true},{"m":"WA","city":"Kenmore","lat":47.7564,"lon":-122.2344,"minutes":21,"band":"20\u201325 min","sector":"Local","source":"tech drives","jobs":28,"on_guide":true},{"m":"WA","city":"Redmond","lat":47.6907,"lon":-122.0699,"minutes":58,"band":"1 hr","sector":"East","source":"tech drives","jobs":83,"on_guide":true},{"m":"WA","city":"Medina","lat":47.6283,"lon":-122.2352,"minutes":76,"band":"1 hr 10+","sector":"East","source":"tech drives","jobs":16,"on_guide":true},{"m":"WA","city":"Puyallup","lat":47.149,"lon":-122.3222,"minutes":86,"band":"1 hr 10+","sector":"South","source":"model","jobs":7,"on_guide":true},{"m":"WA","city":"Arlington","lat":48.1685,"lon":-122.1724,"minutes":43,"band":"35\u201345 min","sector":"North","source":"tech drives","jobs":18,"on_guide":true},{"m":"WA","city":"Newcastle","lat":47.5308,"lon":-122.1556,"minutes":49,"band":"50\u201355 min","sector":"South","source":"model","jobs":11,"on_guide":true},{"m":"AZ","city":"Peoria","lat":33.6665,"lon":-112.2576,"minutes":38,"band":"35\u201345 min","sector":"West","source":"tech drives","jobs":12,"on_guide":true},{"m":"AZ","city":"Rio Verde","lat":33.7162,"lon":-111.6687,"minutes":40,"band":"35\u201345 min","sector":"North","source":"model","jobs":1,"on_guide":true},{"m":"AZ","city":"Mesa","lat":33.4321,"lon":-111.6991,"minutes":24,"band":"20\u201325 min","sector":"Local","source":"tech drives","jobs":43,"on_guide":true},{"m":"WA","city":"Renton","lat":47.48,"lon":-122.1768,"minutes":72,"band":"1 hr 10+","sector":"South","source":"tech drives","jobs":65,"on_guide":true},{"m":"WA","city":"Maple Valley","lat":47.4002,"lon":-122.0187,"minutes":66,"band":"1 hr 10+","sector":"South","source":"model","jobs":10,"on_guide":true},{"m":"AZ","city":"Goodyear","lat":33.4408,"lon":-112.4302,"minutes":55,"band":"50\u201355 min","sector":"West","source":"model","jobs":7,"on_guide":true},{"m":"AZ","city":"Chandler","lat":33.2317,"lon":-111.8226,"minutes":33,"band":"35\u201345 min","sector":"Local","source":"tech drives","jobs":18,"on_guide":true},{"m":"AZ","city":"Sun City","lat":33.6076,"lon":-112.297,"minutes":48,"band":"50\u201355 min","sector":"West","source":"model","jobs":1,"on_guide":true},{"m":"AZ","city":"Cave Creek","lat":33.8077,"lon":-111.9622,"minutes":46,"band":"35\u201345 min","sector":"North","source":"model","jobs":10,"on_guide":true},{"m":"WA","city":"Seatac","lat":47.4377,"lon":-122.2912,"minutes":57,"band":"50\u201355 min","sector":"South","source":"model","jobs":6,"on_guide":true},{"m":"WA","city":"Federal Way","lat":47.3192,"lon":-122.3474,"minutes":74,"band":"1 hr 10+","sector":"South","source":"tech drives","jobs":30,"on_guide":true},{"m":"WA","city":"Stanwood","lat":48.1531,"lon":-122.3117,"minutes":56,"band":"50\u201355 min","sector":"North","source":"model","jobs":8,"on_guide":true},{"m":"AZ","city":"Queen Creek","lat":33.2668,"lon":-111.6707,"minutes":33,"band":"35\u201345 min","sector":"Local","source":"tech drives","jobs":13,"on_guide":true},{"m":"WA","city":"Anacortes","lat":48.4973,"lon":-122.6515,"minutes":94,"band":"1 hr 10+","sector":"North","source":"model","jobs":5,"on_guide":true},{"m":"WA","city":"Lake Forest Park","lat":47.7683,"lon":-122.2828,"minutes":18,"band":"20\u201325 min","sector":"Local","source":"tech drives","jobs":22,"on_guide":true},{"m":"WA","city":"Normandy Park","lat":47.4223,"lon":-122.3419,"minutes":58,"band":"1 hr","sector":"South","source":"model","jobs":5,"on_guide":true},{"m":"AZ","city":"Paradise Valley","lat":33.5297,"lon":-111.9631,"minutes":32,"band":"30 min","sector":"Local","source":"tech drives","jobs":12,"on_guide":true},{"m":"WA","city":"North Bend","lat":47.4859,"lon":-121.781,"minutes":69,"band":"1 hr 10+","sector":"South","source":"model","jobs":12,"on_guide":true},{"m":"WA","city":"Auburn","lat":47.3229,"lon":-122.2042,"minutes":73,"band":"1 hr 10+","sector":"South","source":"tech drives","jobs":26,"on_guide":true},{"m":"WA","city":"Roy","lat":47.0001,"lon":-122.5139,"minutes":101,"band":"1 hr 10+","sector":"South","source":"model","jobs":4,"on_guide":true},{"m":"WA","city":"Mount Vernon","lat":48.4097,"lon":-122.3125,"minutes":82,"band":"1 hr 10+","sector":"North","source":"model","jobs":7,"on_guide":true},{"m":"WA","city":"Clyde Hill","lat":47.6311,"lon":-122.2156,"minutes":36,"band":"35\u201345 min","sector":"East","source":"model","jobs":8,"on_guide":true},{"m":"AZ","city":"Florence","lat":33.0721,"lon":-111.4651,"minutes":54,"band":"50\u201355 min","sector":"Southeast","source":"model","jobs":1,"on_guide":false},{"m":"WA","city":"Brier","lat":47.7895,"lon":-122.2762,"minutes":15,"band":"0\u201315 min","sector":"Local","source":"model","jobs":17,"on_guide":true},{"m":"AZ","city":"Sun City West","lat":33.6909,"lon":-112.3768,"minutes":56,"band":"50\u201355 min","sector":"West","source":"model","jobs":1,"on_guide":true},{"m":"WA","city":"Covington","lat":47.3664,"lon":-122.1039,"minutes":67,"band":"1 hr 10+","sector":"South","source":"model","jobs":4,"on_guide":true},{"m":"WA","city":"Des Moines","lat":47.4025,"lon":-122.3268,"minutes":60,"band":"1 hr","sector":"South","source":"model","jobs":10,"on_guide":true},{"m":"AZ","city":"Buckeye","lat":33.4474,"lon":-112.5658,"minutes":63,"band":"1 hr 10+","sector":"West","source":"model","jobs":9,"on_guide":true},{"m":"AZ","city":"Glendale","lat":33.6629,"lon":-112.1958,"minutes":45,"band":"35\u201345 min","sector":"West","source":"model","jobs":10,"on_guide":true},{"m":"AZ","city":"Surprise","lat":33.6019,"lon":-112.428,"minutes":56,"band":"50\u201355 min","sector":"West","source":"model","jobs":6,"on_guide":true},{"m":"AZ","city":"Maricopa","lat":33.0696,"lon":-112.019,"minutes":48,"band":"50\u201355 min","sector":"Southeast","source":"model","jobs":7,"on_guide":false},{"m":"AZ","city":"Sun Lakes","lat":33.223,"lon":-111.8834,"minutes":33,"band":"35\u201345 min","sector":"Local","source":"model","jobs":1,"on_guide":true},{"m":"AZ","city":"Laveen Village","lat":33.3588,"lon":-112.1484,"minutes":37,"band":"35\u201345 min","sector":"West","source":"model","jobs":1,"on_guide":true},{"m":"WA","city":"Woodway","lat":47.7929,"lon":-122.3881,"minutes":16,"band":"0\u201315 min","sector":"Local","source":"model","jobs":9,"on_guide":true},{"m":"AZ","city":"Litchfield Park","lat":33.5043,"lon":-112.3682,"minutes":51,"band":"50\u201355 min","sector":"West","source":"model","jobs":4,"on_guide":true},{"m":"WA","city":"Tukwila","lat":47.4724,"lon":-122.2556,"minutes":53,"band":"50\u201355 min","sector":"South","source":"model","jobs":7,"on_guide":true},{"m":"AZ","city":"Fountain Hills","lat":33.6084,"lon":-111.7294,"minutes":29,"band":"30 min","sector":"Local","source":"model","jobs":4,"on_guide":true},{"m":"WA","city":"Carnation","lat":47.6564,"lon":-121.9089,"minutes":51,"band":"50\u201355 min","sector":"East","source":"model","jobs":4,"on_guide":true},{"m":"AZ","city":"Anthem","lat":33.8773,"lon":-112.1368,"minutes":55,"band":"50\u201355 min","sector":"North","source":"model","jobs":1,"on_guide":true},{"m":"WA","city":"Bellingham","lat":48.7504,"lon":-122.4518,"minutes":115,"band":"1 hr 10+","sector":"North","source":"model","jobs":4,"on_guide":true},{"m":"AZ","city":"Avondale","lat":33.4784,"lon":-112.2735,"minutes":44,"band":"35\u201345 min","sector":"West","source":"model","jobs":1,"on_guide":true},{"m":"AZ","city":"San Tan Valley","lat":33.1854,"lon":-111.587,"minutes":42,"band":"35\u201345 min","sector":"Southeast","source":"model","jobs":3,"on_guide":false},{"m":"AZ","city":"El Mirage","lat":33.6056,"lon":-112.3335,"minutes":51,"band":"50\u201355 min","sector":"West","source":"model","jobs":2,"on_guide":true}],"model":{"WA":{"a":7.0,"b":2.58,"p":0.8,"lake":4},"AZ":{"a":7.454369807795789,"b":1.9168612343535345,"p":0.8,"lake":0}},"markets":{"WA":{"shop":[47.7987,-122.3267],"shopName":"Mountlake Terrace shop"},"AZ":{"shop":[33.444,-111.8414],"shopName":"Mesa shop"}},"builtFrom":"ServiceTitan jobs, invoices and technician clock data, Jun 12 \u2013 Sep 9 2026"}</script>
+<script>
+(function(){
+'use strict';
+const B = JSON.parse(document.getElementById('bundle').textContent);
+const DEPART = 435, DAY0 = 420, DAY1 = 1140, PX = 1.15;
+const CCRS = ['Alyssa R.','Brice M.','Brooke M.','JeriLynn D.','Kendall O.','Miguel A.','Samantha M.'];
+const TAGS = {'! Do not Move':['Do Not Move','DNM'],'! Requested AM':['Requested AM','AM'],'! Requested PM':['Requested PM','PM'],'! Specific Tech':['Specific tech','TECH'],'! Requested Tech':['Requested tech','TECH'],'! NO WATER HOOK UP':['No water hookup','NO H2O'],'! Portable':['Portable job','PORT'],'! Extra Hose Needed':['Extra hose',''],'! Empty House':['Empty house',''],'! FLEXIBLE TIME':['Flexible time','FLEX'],'!**WAITLIST':['Waitlist',''],'! Reschedule Customer':['Rescheduled customer',''],'Set Time!':['Set time','SET']};
+const HOT_TAGS = ['! Do not Move','! Requested AM','! Requested PM','! Specific Tech','! Requested Tech','! NO WATER HOOK UP','! Portable'];
+const COLNAME = {std:'Standard',jesusa:'Jesus A.',oliver:'Oliver',beck:'Beck',enrique:'Enrique',connor:'Connor',ben:'Ben',jesusr:'Jesus R.',steve:'Steve',maverick:'Maverick',trevor:'Trevor',austin:'Austin',dominic:'Dominic',isaiah:'Isaiah'};
+
+/* Booking chart (monday master phone scripts, rebuilt Aug 2026) */
+const WA_AREAS = {std:[2.5,2.5,2.5,2.5,3,3,3.5,4,4,4.5],jesusa:[2.5,2.5,2.5,2.5,2.5,2.5,3.5,3.5,3.5,4],oliver:[2,2,2,2,2.5,3,3,3.5,3.5,4],beck:[2.5,2.5,2.5,2.5,3,3,3.5,4,4,4.5],enrique:[2.5,2.5,2.5,2.5,3,3.5,4,4,4,5],connor:[3,3,3,3.5,3.5,3.5,4,5,5,6]};
+const WA_OTHER = {furniture:{std:3,jesusa:2.5,oliver:2.5,beck:3,enrique:2.5,connor:4},tile:{std:3,jesusa:3,oliver:2.5,beck:3,enrique:3.5,connor:4},rug:{std:2.5,jesusa:2.5,oliver:2,beck:2.5,enrique:2.5,connor:3},wood:{std:3.5,jesusa:3.5,oliver:3,beck:4,enrique:4,connor:4.5},commercial:{std:5,jesusa:3.5,oliver:3.5,beck:5,enrique:5.5,connor:6.5}};
+const AZ_AREAS = {std:[2.5,3.5,3.5],dominic:[2.5,3.5,3.5],isaiah:[3,3.5,3.5]};
+const AZ_OTHER = {furniture:{std:3.5,dominic:3.5,isaiah:4},tile:{std:5,dominic:5,isaiah:5},rug:{std:3,dominic:3,isaiah:3}};
+const WA_ESS = {std:[3,3.5,4,4.5,4.5,5],ben:[3,3.5,4,4,4.5,4.5],jesusr:[3,3.5,4,4.5,4.5,5],steve:[3.5,3.5,4,4.5,5,5],maverick:[3.5,3.5,4,4,4.5,5]};
+const WA_DIA = {std:[3.5,4,4,4.5,4.5,5,5],ben:[3.5,3.5,4,4.5,4.5,5,5],jesusr:[3.5,4,4.5,4.5,4.5,5,5],steve:[4,4,4,5,5,5.5,5.5],maverick:[3.5,4,4.5,4.5,4.5,5,5.5]};
+const AZ_ESS = {std:[4,4.5,5,6],trevor:[4,4.5,5,6],austin:[4,4.5,5,6.5]};
+const AZ_DIA = {std:[4,4.5,5.5,6.5,6.5],trevor:[4,4,5,6.5,6.5],austin:[4,4.5,6,7,7]};
+const PIECE = {sofa:45,lshape:80,ushape:90,loveseat:30,fullchair:20,dining:7.5,ottoman:10,cushion:5,chaise:20};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} },
+  del(k){ try { localStorage.removeItem(k); } catch(e){} }
+};
+function clock(m){ m = Math.round(m); const h = Math.floor(m/60), mm = m % 60; return `${h % 12 || 12}:${String(mm).padStart(2,'0')} ${h >= 12 ? 'PM' : 'AM'}`; }
+function shortT(m){ const h = Math.floor(m/60), mm = m % 60; const s = `${h % 12 || 12}${mm ? ':' + String(mm).padStart(2,'0') : ''}`; return s + (h >= 12 ? 'p' : 'a'); }
+function dur(m){ m = Math.round(m); const h = Math.floor(m/60), mm = m % 60; return h ? (mm ? `${h}h ${String(mm).padStart(2,'0')}m` : `${h}h`) : `${mm}m`; }
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+/* ---------- geography ---------- */
+function hav(a, b){ const r = Math.PI/180, dLa = (b[0]-a[0])*r, dLo = (b[1]-a[1])*r; const x = Math.sin(dLa/2)**2 + Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dLo/2)**2; return 12742*Math.asin(Math.sqrt(x)); }
+const eastside = p => p[0] > 47.50 && p[0] < 47.78 && p[1] > -122.235;
+const westLake = p => p[0] > 47.48 && p[0] < 47.78 && p[1] < -122.25;
+function drive(mkt, a, b){ const m = B.model[mkt]; let v = m.a + m.b*Math.pow(hav(a, b), m.p); if (mkt === 'WA' && m.lake && ((westLake(a) && eastside(b)) || (eastside(a) && westLake(b)))) v += m.lake; return Math.round(v); }
+const ZONE = {}; B.zones.forEach(z => { ZONE[z.m + '|' + z.city] = z; });
+function sectorOf(mkt, j, shop){
+  const z = ZONE[mkt + '|' + j.city]; if (z) return z.sector;
+  if (mkt !== 'WA') return 'Local';
+  const p = [j.lat, j.lon]; if (drive(mkt, shop, p) <= 27) return 'Local';
+  if (p[0] >= 47.84) return 'North'; if (p[0] < 47.55) return 'South'; if (p[1] > -122.245) return 'East'; return 'West';
+}
+function isCross(mkt, a, b){ if (mkt !== 'WA') return false; if ((a === 'West' && b === 'East') || (a === 'East' && b === 'West')) return true; const n = s => s === 'North' || s === 'Local'; return (n(a) && b === 'South') || (a === 'South' && n(b)); }
+
+/* ---------- booking chart ---------- */
+const pickCol = (tbl, col) => tbl[col] !== undefined ? tbl[col] : tbl.std;
+const colWho = (tbl, col, t) => (tbl[col] !== undefined && col !== 'std') ? t.name + ' column' : 'Standard column';
+function areasHours(mkt, n, col){
+  if (mkt === 'WA'){ const W = pickCol(WA_AREAS, col); return n <= 10 ? W[n-1] : W[9] + 0.5*Math.ceil((n-10)/2); }
+  const A = pickCol(AZ_AREAS, col); if (n <= 3) return A[0]; if (n <= 5) return A[n-3];
+  const S0 = WA_AREAS.std; return A[2] + (S0[Math.min(n,10)-1] - S0[4]) + (n > 10 ? 0.5*Math.ceil((n-10)/2) : 0);
+}
+function chartFor(ctx, j, t){
+  const mkt = ctx.sc.market, s = j.scope, col = t.chart || 'std';
+  if (j.cat === 'estimate') return {h:1, parts:['estimate 1h']};
+  if (j.cat === 'redo') return {h:1.5, parts:['redo 1h 30m']};
+  if (j.cat === 'dv'){ const v = mkt === 'AZ' ? 1.5 : (s.dv === 'over10' ? 1.5 : 1); return {h:v, parts:[`dryer vent only ${dur(v*60)}`]}; }
+  if (j.cat === 'duct'){
+    const tbl = s.pkg === 'Diamond' ? (mkt === 'AZ' ? AZ_DIA : WA_DIA) : (mkt === 'AZ' ? AZ_ESS : WA_ESS);
+    const arr = pickCol(tbl, col); const idx = s.sqft <= 1500 ? 0 : Math.ceil((s.sqft-1500)/500);
+    const v = idx < arr.length ? arr[idx] : arr[arr.length-1] + 0.5*(idx-arr.length+1);
+    return {h:v, parts:[`${s.pkg} ${s.sqft <= 1500 ? '0' : (s.sqft-499).toLocaleString()}–${s.sqft.toLocaleString()} sq ft, ${colWho(tbl, col, t)} ${dur(v*60)}`]};
+  }
+  if (j.cat === 'ductcom' || j.cat === 'service') return null;
+  const OTH = mkt === 'AZ' ? AZ_OTHER : WA_OTHER;
+  if (j.cat === 'carpetcom'){ if (!OTH.commercial) return null; const v = pickCol(OTH.commercial, col); return {h:v, parts:[`commercial, ${colWho(OTH.commercial, col, t)} ${dur(v*60)}`]}; }
+  let h = 0; const parts = [];
+  const furnMin = Object.entries(s.furn || {}).reduce((n, [k, q]) => n + (PIECE[k] || 10)*q, 0);
+  const addOn = (qty, tbl, label) => { if (!qty) return; if (qty < 150 || !tbl){ h += 0.5; parts.push(`${label} add-on 30m`); } else { const v = pickCol(tbl, col); h += v; parts.push(`${label} ${dur(v*60)}`); } };
+  if (s.areas > 0){
+    const v = areasHours(mkt, s.areas, col); h = v; parts.push(`${s.areas} area${s.areas > 1 ? 's' : ''}, ${colWho(mkt === 'AZ' ? AZ_AREAS : WA_AREAS, col, t)} ${dur(v*60)}`);
+    if (furnMin){ h += furnMin/60; parts.push(`furniture pieces ${dur(furnMin)}`); }
+    addOn(s.tile, OTH.tile, 'tile'); addOn(s.rug, OTH.rug, 'area rugs'); addOn(s.wood, OTH.wood, 'hardwood');
+  } else if (furnMin){
+    const whole = pickCol(OTH.furniture, col); h = Math.max(whole, furnMin/60);
+    parts.push(furnMin/60 > whole ? `furniture pieces ${dur(furnMin)}` : `furniture job, ${colWho(OTH.furniture, col, t)} ${dur(whole*60)}`);
+    addOn(s.tile, OTH.tile, 'tile'); addOn(s.rug, OTH.rug, 'area rugs');
+  } else if (s.tile){ h = pickCol(OTH.tile, col); parts.push(`tile, ${colWho(OTH.tile, col, t)} ${dur(h*60)}`); addOn(s.rug, OTH.rug, 'area rugs'); }
+  else if (s.rug){ h = pickCol(OTH.rug, col); parts.push(`area rugs in home, ${colWho(OTH.rug, col, t)} ${dur(h*60)}`); }
+  else if (s.wood && OTH.wood){ h = pickCol(OTH.wood, col); parts.push(`hardwood, ${colWho(OTH.wood, col, t)} ${dur(h*60)}`); }
+  else return null;
+  return {h: Math.ceil(h*2 - 1e-9)/2, parts};
+}
+
+/* ---------- scenario context ---------- */
+const ctxCache = {};
+function buildCtx(sc){
+  const techs = sc.techs.map((t, i) => Object.assign({}, t, {ci: i % 7, skills: t.skills || [], implied: t.implied || [], blocks: t.blocks || []}));
+  const tById = Object.fromEntries(techs.map(t => [t.id, t]));
+  sc.jobs.forEach((j, i) => { j._i = i + 1; });
+  const jById = Object.fromEntries(sc.jobs.map(j => [j.id, j]));
+  const shop = B.markets[sc.market].shop;
+  const pts = [shop].concat(sc.jobs.map(j => [j.lat, j.lon]));
+  const dm = pts.map(a => pts.map(b => drive(sc.market, a, b)));
+  const sec = pts.map((p, i) => i === 0 ? 'Local' : sectorOf(sc.market, sc.jobs[i-1], shop));
+  const unavailable = new Set(techs.filter(t => t.blocks.some(b => b.callout)).map(t => t.id));
+  return {sc, techs, tById, jobs: sc.jobs, jById, shop, dm, sec, unavailable};
+}
+const ctxFor = sc => ctxCache[sc.id] || (ctxCache[sc.id] = buildCtx(sc));
+function initialAssign(sc){ const a = {}; for (const j of sc.jobs) a[j.id] = {tech: j.tech || null, helper: j.helper || null, start: j.start, dur: j.dur}; return a; }
+
+/* ---------- scoring ---------- */
+function evaluate(ctx, assign, lite){
+  const sc = ctx.sc, mkt = sc.market, items = [], lost = [];
+  const add = (k, pts, key, text, job, tech) => items.push({k, pts, key, text: lite ? '' : text(), job: job || null, tech: tech || null});
+  const exp = {}, chartMap = {};
+  for (const j of ctx.jobs){ const a = assign[j.id]; const lead = a.tech ? ctx.tById[a.tech] : null; const c = lead ? chartFor(ctx, j, lead) : null; chartMap[j.id] = c; exp[j.id] = c ? c.h*60 : a.dur; }
+  const byTech = {}; ctx.techs.forEach(t => { byTech[t.id] = []; });
+  for (const j of ctx.jobs){
+    const a = assign[j.id];
+    if (!a.tech || !ctx.tById[a.tech]){ lost.push({job: j.id, why: 'No tech assigned'}); continue; }
+    if (ctx.unavailable.has(a.tech)){ lost.push({job: j.id, why: `${ctx.tById[a.tech].name} called out`}); continue; }
+    byTech[a.tech].push(j);
+    if (a.helper && a.helper !== a.tech && ctx.tById[a.helper] && !ctx.unavailable.has(a.helper)) byTech[a.helper].push(j);
+  }
+  const recs = {}, perTech = {}; let driveTotal = 0, crossings = 0;
+  for (const t of ctx.techs){
+    const list = byTech[t.id].sort((x, y) => (assign[x.id].start - assign[y.id].start) || (x._i - y._i));
+    let clk = DEPART, li = 0, prevSec = null, td = 0; const seq = [];
+    for (const j of list){
+      const a = assign[j.id], dr = ctx.dm[li][j._i];
+      const arr = Math.max(a.start, clk + dr), end = arr + exp[j.id], lead = a.tech === t.id;
+      seq.push({job: j, arr, end, dr, lead}); td += dr;
+      const s = ctx.sec[j._i]; if (prevSec && isCross(mkt, prevSec, s)) crossings++; prevSec = s;
+      clk = end; li = j._i; if (lead) recs[j.id] = {arr, end, dr};
+    }
+    if (list.length) td += ctx.dm[li][0];
+    driveTotal += td; perTech[t.id] = {seq, drive: td, lastEnd: list.length ? clk : null};
+  }
+  for (const j of ctx.jobs){
+    const a = assign[j.id]; if (!a.tech || !ctx.tById[a.tech] || ctx.unavailable.has(a.tech)) continue;
+    const lead = ctx.tById[a.tech], r = recs[j.id], helper = a.helper ? ctx.tById[a.helper] : null;
+    const have = new Set(lead.skills.concat(lead.implied));
+    const missing = j.req.filter(x => !have.has(x));
+    if (missing.length){
+      const tr = j.training;
+      if (tr && tr.tech === lead.id && missing.every(m => m === tr.skill)){
+        const ok = helper && !ctx.unavailable.has(helper.id) && helper.skills.concat(helper.implied).includes(tr.skill);
+        if (ok) add('skills', 0, 'train-ok', () => `Growth job done right: ${lead.name} runs ${tr.skill} with ${helper.name} riding along, as training approved.`, j.id, lead.id);
+        else add('skills', -6, 'train-no', () => `${lead.name} is approved to learn ${tr.skill} only with a certified trainer riding along. No certified trainer is on this job.`, j.id, lead.id);
+      } else add('skills', -10, 'skill', () => `${lead.name} doesn't have ${missing.join(' or ')} in ServiceTitan.`, j.id, lead.id);
+    }
+    if (j.tags.includes('! NO WATER HOOK UP') && !lead.water) add('skills', -8, 'water', () => `No water hookup at this house, and ${lead.name}'s truck doesn't carry water.`, j.id, lead.id);
+    if (j.tags.includes('! Portable') && !lead.portable) add('skills', -8, 'portable', () => `Portable job, and ${lead.name}'s truck isn't set up for portable work.`, j.id, lead.id);
+    if (j.scope.crb && !lead.crb) add('skills', -8, 'crb', () => `FiberRevive needs a CRB machine. ${lead.name} doesn't have one.`, j.id, lead.id);
+    if ((lead.rules || []).includes('residential_only') && (j.commercialCustomer || j.cat === 'carpetcom')) add('skills', -8, 'resonly', () => `${lead.name}'s board stays residential. This is a commercial customer.`, j.id, lead.id);
+    if (j.cat === 'redo' && lead.pay === 'Commission') add('skills', -4, 'redo', () => `Redos go to hourly techs. ${lead.name} is commission-only.`, j.id, lead.id);
+
+    const moved = a.start < j.win[0] || a.start > j.win[1];
+    if (moved){
+      if (j.tags.includes('! Do not Move')) add('sop', -8, 'dnm', () => `Do Not Move job booked at ${clock(a.start)}, outside the customer's ${clock(j.win[0])}–${clock(j.win[1])} window.`, j.id);
+      else add('sop', -4, 'window', () => `Booked at ${clock(a.start)}, outside the ${clock(j.win[0])}–${clock(j.win[1])} window the customer ${j.isNew ? 'asked for' : 'was promised'}.`, j.id);
+    }
+    const promised = a.start > j.win[1] ? a.start : j.win[1];
+    if (!j.tags.includes('! FLEXIBLE TIME') && r.arr > promised + 5) add('sop', -5, 'late', () => `${lead.name} gets there at ${clock(r.arr)}, ${dur(r.arr - promised)} past the ${clock(promised)} end of the arrival window.`, j.id, lead.id);
+    if (j.tags.includes('! Requested AM') && r.arr >= 720) add('sop', -4, 'am', () => `Requested AM, but ${lead.name} arrives at ${clock(r.arr)}.`, j.id);
+    if (j.tags.includes('! Requested PM') && r.arr < 720) add('sop', -4, 'pm', () => `Requested PM, but ${lead.name} arrives at ${clock(r.arr)}.`, j.id);
+    if ((j.tags.includes('! Specific Tech') || j.tags.includes('! Requested Tech')) && j.tech && a.tech !== j.tech) add('sop', -5, 'spec', () => `The customer asked for ${ctx.tById[j.tech].name}. It's now on ${lead.name}.`, j.id);
+    const c = chartMap[j.id];
+    if (c){
+      const cm = c.h*60;
+      if (a.dur < cm - 15) add('sop', -3, 'short', () => `Booked for ${dur(a.dur)}. The booking chart says ${dur(cm)} for ${lead.name}: ${c.parts.join(' + ')}.`, j.id, lead.id);
+      else if (a.dur > cm + 90) add('sop', -1, 'long', () => `Booked for ${dur(a.dur)}, but the chart says ${dur(cm)} for ${lead.name}. That's sellable time sitting empty.`, j.id, lead.id);
+    }
+    if ((j.cat === 'carpet' || j.cat === 'wood') && r.arr > 960) add('sop', -3, 'afterhrs', () => `Arrives at ${clock(r.arr)}. Carpet arrivals after 4:00 PM need specialist sign-off.`, j.id);
+    if (j.cat === 'duct' && r.arr > 900) add('sop', -3, 'afterhrs', () => `Arrives at ${clock(r.arr)}. The latest duct arrival is 1–3 PM.`, j.id);
+  }
+  for (const t of ctx.techs){
+    if (ctx.unavailable.has(t.id)) continue;
+    const pt = perTech[t.id], leadSeq = pt.seq.filter(s => s.lead);
+    const bk = byTech[t.id].map(j => ({j, s: assign[j.id].start, e: assign[j.id].start + assign[j.id].dur})).sort((x, y) => x.s - y.s);
+    for (let i = 1; i < bk.length; i++) if (bk[i].s < bk[i-1].e) add('sop', -3, 'overlap', () => `${t.name} is booked on two jobs at once: ${bk[i-1].j.city} and ${bk[i].j.city}.`, bk[i].j.id, t.id);
+    for (const s of pt.seq){
+      for (const b of t.blocks){
+        if (b.callout || (t.hardStop && b.start >= t.hardStop.min && t.hardStop.dow === sc.dow)) continue;
+        if (b.end > s.arr && b.start < s.end){ add('sop', -6, 'block', () => `${t.name}'s ${s.job.city} job runs into the "${b.label}" block (${clock(b.start)}–${clock(b.end)}).`, s.job.id, t.id); break; }
+      }
+    }
+    if (t.hardStop && t.hardStop.dow === sc.dow && pt.lastEnd != null && pt.lastEnd > t.hardStop.min) add('sop', -8, 'hardstop', () => `${t.name} has a hard stop at ${clock(t.hardStop.min)} and is working until ${clock(pt.lastEnd)}.`, leadSeq.length ? leadSeq[leadSeq.length-1].job.id : null, t.id);
+    if (t.maxJobs && leadSeq.length > t.maxJobs) add('sop', -6, 'maxjobs', () => `${t.name}'s board is blocked at ${t.maxJobs} jobs, and he has ${leadSeq.length}.`, null, t.id);
+    const areas = leadSeq.reduce((n, s) => n + (s.job.scope.areas || 0), 0);
+    if (areas > 20) add('sop', -6, 'cap', () => `${t.name} has ${areas} carpet areas. The daily max is 20.`, null, t.id);
+    const sq = leadSeq.reduce((n, s) => n + (s.job.cat === 'duct' ? (s.job.scope.sqft || 0) : 0), 0);
+    if (sq > 6000) add('sop', -6, 'cap', () => `${t.name} has ${sq.toLocaleString()} sq ft of ducts. The daily max is 6,000.`, null, t.id);
+    if (pt.lastEnd != null && pt.lastEnd > 1050) add('sop', -3, 'eod', () => `${t.name} finishes around ${clock(pt.lastEnd)}, past 5:30 PM.`, null, t.id);
+  }
+  const ded = k => -items.filter(i => i.k === k).reduce((n, i) => n + i.pts, 0);
+  return {items, lost, driveTotal, crossings, skillsDed: ded('skills'), sopDed: ded('sop'), recs, perTech, chartMap, late: items.filter(i => i.key === 'late').length};
+}
+function scoreOf(ev, bd){
+  if (ev.lost.length) return {total:0, routing:0, skills:0, sop:0, zero:true, over:0, cross:0};
+  const skills = 30 - Math.min(30, Math.max(0, ev.skillsDed - bd.skillsDed));
+  const sop = 30 - Math.min(30, Math.max(0, ev.sopDed - bd.sopDed));
+  const over = Math.max(0, ev.driveTotal - bd.driveTotal) / Math.max(1, bd.driveTotal);
+  const cross = Math.max(0, ev.crossings - bd.crossings);
+  const routing = Math.max(0, 40 - Math.min(40, Math.round(40*over)) - Math.min(12, 3*cross));
+  return {total: routing + skills + sop, routing, skills, sop, zero:false, over, cross};
+}
+
+/* ---------- best-board search (deterministic, cached per phone) ---------- */
+function hashStr(s){ let h = 2166136261; for (let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const benchCache = {};
+function benchFor(ctx){
+  const id = ctx.sc.id, key = 'dd-bench-v5-' + id;
+  if (benchCache[id]) return benchCache[id];
+  const cached = store.get(key, null);
+  if (cached && cached.assign && ctx.jobs.every(j => cached.assign[j.id])) return (benchCache[id] = Promise.resolve({assign: cached.assign, ev: evaluate(ctx, cached.assign)}));
+  return (benchCache[id] = new Promise(resolve => {
+    const rng = mulberry32(hashStr(id));
+    const avail = ctx.techs.filter(t => !ctx.unavailable.has(t.id)).map(t => t.id);
+    const lists = {}; avail.forEach(t => { lists[t] = []; });
+    ctx.jobs.slice().sort((x, y) => x.start - y.start).forEach(j => { const t = (j.tech && lists[j.tech]) ? j.tech : avail[Math.floor(rng()*avail.length)]; lists[t].push(j.id); });
+    const decode = L => {
+      const a = {};
+      for (const tid of avail){
+        const t = ctx.tById[tid]; let clk = DEPART, li = 0;
+        for (const id of L[tid]){
+          const j = ctx.jById[id], dr = ctx.dm[li][j._i], earliest = clk + dr;
+          const st = j.tags.includes('! Do not Move') ? j.start : Math.max(j.win[0], Math.ceil(earliest/15)*15);
+          const c = chartFor(ctx, j, t), d = c ? Math.round(c.h*60) : j.dur;
+          a[id] = {tech: tid, helper: null, start: st, dur: d}; clk = Math.max(st, earliest) + d; li = j._i;
+        }
+      }
+      return a;
+    };
+    const cost = L => { const ev = evaluate(ctx, decode(L), true); return ev.driveTotal + 7*(ev.skillsDed + ev.sopDed) + 10*ev.crossings + 500*ev.lost.length; };
+    const clone = L => { const o = {}; for (const k in L) o[k] = L[k].slice(); return o; };
+    const mutate = L => {
+      const c = clone(L), r = rng(), full = avail.filter(t => c[t].length);
+      const any = arr => arr[Math.floor(rng()*arr.length)];
+      if (r < 0.55){ const from = any(full); const [id] = c[from].splice(Math.floor(rng()*c[from].length), 1); const to = any(avail); c[to].splice(Math.floor(rng()*(c[to].length + 1)), 0, id); }
+      else if (r < 0.85){ const t1 = any(full), t2 = any(full); const i = Math.floor(rng()*c[t1].length), k = Math.floor(rng()*c[t2].length); const tmp = c[t1][i]; c[t1][i] = c[t2][k]; c[t2][k] = tmp; }
+      else { const t = any(full), n = c[t].length; if (n > 1){ let i = Math.floor(rng()*n), k = Math.floor(rng()*n); if (i > k) [i, k] = [k, i]; const seg = c[t].slice(i, k + 1).reverse(); c[t].splice(i, seg.length, ...seg); } }
+      return c;
+    };
+    let cur = lists, curC = cost(cur), best = clone(cur), bestC = curC, it = 0;
+    const N = 16000, T0 = 90, T1 = 0.5;
+    const step = () => {
+      const stop = Math.min(N, it + 800);
+      for (; it < stop; it++){
+        const T = T0*Math.pow(T1/T0, it/N), cand = mutate(cur), cc = cost(cand);
+        if (cc < curC || rng() < Math.exp((curC - cc)/T)){ cur = cand; curC = cc; if (cc < bestC){ best = clone(cand); bestC = cc; } }
+      }
+      if (it < N) setTimeout(step, 0);
+      else { const assign = decode(best); store.set(key, {assign}); resolve({assign, ev: evaluate(ctx, assign)}); }
+    };
+    setTimeout(step, 40);
+  }));
+}
+
+/* ---------- shared leaderboard (db capability) ---------- */
+let dbPromise = null;
+function getDb(){ if (!dbPromise) dbPromise = (window.claude && typeof window.claude.use === 'function') ? window.claude.use('db').catch(() => null) : Promise.resolve(null); return dbPromise; }
+getDb();
+
+/* ---------- home ---------- */
+function rulesHtml(){
+  return `<div class="rule"><b>40</b><div><h4>Routing</h4><p>Your total drive time against the best board found for the same day. Every 10% more driving costs 4 points. In WA, each extra zone crossing (Seattle ↔ Eastside, North or Local ↔ South) costs 3.</p></div></div>
+  <div class="rule"><b>30</b><div><h4>Skills &amp; equipment</h4><p>Tech missing the ServiceTitan skill −10. A growth job needs its training-approved note and a certified trainer riding along (−6 without the trainer). Truck can't do the job (water, portable, CRB) −8. Beck stays residential −8. Redo on a commission tech −4.</p></div></div>
+  <div class="rule"><b>30</b><div><h4>SOP &amp; timing</h4><p>Late to the arrival window −5. Window moved −4, or −8 on a Do Not Move job. Requested AM/PM missed −4. Requested tech changed −5. Booked shorter than the booking chart for the invoiced work −3. Runs into a dispatch block −6. Past a hard stop −8. Over a job cap or daily capacity −6. Late-day arrivals or finishing after 5:30 PM −3. Double-booked −3.</p></div></div>
+  <div class="rule zero"><b>0</b><div><h4>Lost job</h4><p>Any job with no tech going out, whether it's unassigned or left on a tech who called out, scores the whole board 0.</p></div></div>`;
+}
+function renderHome(){
+  const name = store.get('dd-name', '');
+  const cards = B.scenarios.map(sc => {
+    const ctx = ctxFor(sc), ev = evaluate(ctx, initialAssign(sc), true), best = store.get('dd-best-' + sc.id, null);
+    return `<button class="card" data-act="play" data-id="${sc.id}">
+      <span class="shield${sc.market === 'AZ' ? ' az' : ''}" aria-hidden="true">${sc.market}</span>
+      <span class="cbody"><h3>${esc(sc.title)}</h3><span class="date">${esc(sc.dateLabel)}</span>
+      <span class="meta">${ctx.techs.length} techs · ${sc.jobs.length} jobs · ${sc.prompts.length} prompts<br>${dur(ev.driveTotal)} of driving as booked</span></span>
+      <span class="best">${best == null ? '–' : best}<small>${best == null ? 'Not played' : 'Your best'}</small></span></button>`;
+  }).join('');
+  const opts = ['<option value="">Pick your name</option>'].concat(CCRS.map(n => `<option${n === name ? ' selected' : ''}>${esc(n)}</option>`)).join('');
+  $('#home').innerHTML = `<div class="home">
+    <div><p class="eyebrow">Alpine Specialty Services · CCR training</p>
+      <h1 class="wordmark">Dispatch<span>Drill</span></h1>
+      <p class="lede">Real Alpine boards from our worst-routed days. Work the prompts, move the jobs, then lock the board to get scored 0–100 on routing, skills and SOP.</p></div>
+    <div class="field"><label for="who">Who's playing</label><select id="who">${opts}</select></div>
+    <div class="cards">${cards}</div>
+    <section class="rules"><h2>How the board is scored</h2>${rulesHtml()}
+      <p class="foot" style="margin-top:12px">The best board for a day can still carry deductions nobody can avoid. You're only charged for what goes past it.</p></section>
+    <p class="foot">Built from ${esc(B.builtFrom)}. Customer names are made up and map pins are moved a few blocks. Drive times are fit to 2,043 real tech drives and usually land within about 6 minutes. Job lengths come from the August 2026 booking chart.</p>
+  </div>`;
+}
+
+/* ---------- game ---------- */
+let S = null;
+function show(which){ ['home','game','results'].forEach(id => { $('#' + id).hidden = id !== which; }); if (which !== 'game'){ closeSheet(true); } }
+function play(id){
+  const sc = B.scenarios.find(s => s.id === id), ctx = ctxFor(sc);
+  const assign = initialAssign(sc), saved = store.get('dd-assign-' + id, null);
+  if (saved) for (const k in assign) if (saved[k]) assign[k] = Object.assign(assign[k], saved[k]);
+  S = {ctx, sc, assign, view: 'board', sheet: null, revealed: store.get('dd-revealed-' + id, false), handled: store.get('dd-handled-' + id, {}), posted: false};
+  S.benchP = benchFor(ctx);
+  show('game'); window.scrollTo(0, 0); renderGame();
+}
+function commit(){ store.set('dd-assign-' + S.sc.id, S.assign); renderGame(); }
+function read(label, val, alert){ return `<div class="read${alert ? ' alert' : ''}"><span>${label}</span><b>${val}</b></div>`; }
+function renderGame(){
+  if (!S) return;
+  const ev = evaluate(S.ctx, S.assign); S.ev = ev;
+  $('#banner').hidden = !S.revealed;
+  $('#gTitle').textContent = S.sc.title;
+  $('#gDate').textContent = `${S.sc.dateLabel} · ${B.markets[S.sc.market].shopName}`.toUpperCase();
+  $('#reads').innerHTML = read('Driving', dur(ev.driveTotal), false) + read('No tech', ev.lost.length, ev.lost.length > 0) + read('Late', ev.late, ev.late > 0);
+  const open = S.sc.prompts.filter(p => !S.handled[p.id]).length;
+  const tabs = [['board','Board'],['map','Map'],['prompts','Prompts'],['chart','Chart']];
+  $('#tabs').innerHTML = tabs.map(([v, l]) => `<button class="tab" role="tab" data-act="tab" data-v="${v}" aria-selected="${S.view === v}">${l}${v === 'prompts' && open ? `<i>${open}</i>` : ''}</button>`).join('');
+  const main = $('#gmain'), sl = main.scrollLeft, st = main.scrollTop, same = main.dataset.view === S.view;
+  main.dataset.view = S.view;
+  main.innerHTML = S.view === 'board' ? renderBoard(ev) : S.view === 'map' ? renderMap(ev) : S.view === 'prompts' ? renderPrompts() : renderChart();
+  if (same){ main.scrollLeft = sl; main.scrollTop = st; } else { main.scrollTop = 0; main.scrollLeft = S.view === 'board' ? 0 : 0; }
+  renderSheet();
+}
+function shortScope(j){
+  const s = j.scope;
+  if (j.cat === 'duct') return `${s.pkg} ${s.sqft <= 1500 ? '≤1,500' : (s.sqft-499).toLocaleString() + '–' + s.sqft.toLocaleString()}${s.dvAddon ? ' + DV' : ''}`;
+  if (j.cat === 'dv') return 'Dryer vent only';
+  if (j.cat === 'ductcom' || j.cat === 'carpetcom') return j.lines[0];
+  if (j.cat === 'service') return 'Service manager visit';
+  if (j.cat === 'estimate') return 'Estimate';
+  if (j.cat === 'redo') return 'Redo';
+  const p = []; if (s.areas) p.push(`${s.areas} area${s.areas > 1 ? 's' : ''}`);
+  const fn = Object.values(s.furn || {}).reduce((a, b) => a + b, 0); if (fn) p.push(`${fn} furniture pc`);
+  if (s.tile) p.push('tile'); if (s.rug) p.push('rugs'); if (s.wood) p.push('hardwood'); if (s.deepcore) p.push('DeepCore'); if (s.crb) p.push('CRB');
+  return p.join(' · ') || j.type;
+}
+const tcol = t => t ? `var(--t${t.ci})` : 'var(--bad)';
+function renderBoard(ev){
+  const ctx = S.ctx, A = S.assign, laneW = Math.round((DAY1 - DAY0)*PX), hour = 60*PX;
+  const late = {}; ev.items.forEach(i => { if (i.key === 'late' && i.job) late[i.job] = true; });
+  let tray = '';
+  if (ev.lost.length){
+    tray = `<div class="tray"><div class="tray-h">Needs a tech · ${ev.lost.length}</div><div class="tray-list">${ev.lost.map(l => { const j = ctx.jById[l.job]; return `<button class="jchip" data-act="job" data-id="${j.id}"><b>${j.id} · ${esc(j.city)}${j.isNew ? '<em class="new">NEW</em>' : ''}</b><span>${esc(l.why)}</span><span>${esc(shortScope(j))} · ${shortT(j.win[0])}–${shortT(j.win[1])}</span></button>`; }).join('')}</div></div>`;
+  }
+  let ticks = ''; for (let m = DAY0; m < DAY1; m += 60) ticks += `<span class="tick" style="left:${(m - DAY0)*PX}px">${shortT(m)}</span>`;
+  const rows = ctx.techs.map(t => {
+    const tc = tcol(t), pt = ev.perTech[t.id], out = ctx.unavailable.has(t.id);
+    let h = '';
+    for (const b of t.blocks){ const s0 = Math.max(b.start, DAY0), e0 = Math.min(b.end, DAY1); if (e0 <= s0) continue; h += `<div class="blk${b.callout ? ' callout' : ''}" style="left:${(s0 - DAY0)*PX}px;width:${(e0 - s0)*PX}px">${esc(b.label)}</div>`; }
+    if (t.hardStop && t.hardStop.dow === S.sc.dow) h += `<div class="stop" style="left:${(t.hardStop.min - DAY0)*PX}px"><span>HARD STOP</span></div>`;
+    for (const j of ctx.jobs){
+      const a = A[j.id]; if (a.tech !== t.id && a.helper !== t.id) continue;
+      const lead = a.tech === t.id;
+      if (lead) h += `<div class="win" style="left:${(j.win[0] - DAY0)*PX}px;width:${Math.max(4, (j.win[1] - j.win[0])*PX)}px"></div>`;
+      const fl = j.tags.map(g => TAGS[g] && TAGS[g][1]).filter(Boolean).map(x => `<span class="flg">${x}</span>`);
+      if (j.isNew) fl.unshift('<span class="flg">NEW</span>');
+      if (lead && late[j.id]) fl.unshift('<span class="flg hot">LATE</span>');
+      h += `<button class="job${lead ? '' : ' helper'}${out ? ' lost' : ''}${S.sheet && S.sheet.job === j.id ? ' sel' : ''}" style="left:${(a.start - DAY0)*PX}px;width:${Math.max(28, a.dur*PX)}px;--tc:${tc}" data-act="job" data-id="${j.id}" aria-label="${esc(`${j.id}, ${j.city}, ${clock(a.start)}, ${dur(a.dur)} booked`)}"><span class="c"><span class="jid">${j.id.slice(1)}</span>${esc(j.city)}</span><span class="s">${lead ? esc(shortScope(j)) : 'Ride-along trainer'}</span><span class="flags">${fl.slice(0, 3).join('')}</span></button>`;
+    }
+    if (pt && !out) for (const s of pt.seq){
+      const a = A[s.job.id], bookedEnd = a.start + a.dur, mid = Math.min(s.end, Math.max(bookedEnd, s.arr));
+      h += `<span class="drv" style="left:${(s.arr - DAY0)*PX}px">${s.dr}m</span>`;
+      if (mid > s.arr) h += `<div class="real" style="left:${(s.arr - DAY0)*PX}px;width:${(mid - s.arr)*PX}px;--tc:${tc}"></div>`;
+      if (s.end > mid) h += `<div class="over" style="left:${(mid - DAY0)*PX}px;width:${(s.end - mid)*PX}px"></div>`;
+    }
+    const eq = []; if (t.water) eq.push('WATER'); if (t.portable) eq.push('PORT'); if (t.crb) eq.push('CRB');
+    return `<div class="row"><button class="who" style="--tc:${tc}" data-act="tech" data-id="${t.id}" aria-label="${esc(t.name)}: skills and restrictions"><b>${esc(t.name)}</b><small>${t.pay.toUpperCase()}${pt && pt.seq.length && !out ? ' · ' + dur(pt.drive) : ''}</small><span class="eq">${out ? '<span class="eqc hot">CALLED OUT</span>' : eq.map(e => `<span class="eqc">${e}</span>`).join('')}</span></button><div class="lane" style="width:${laneW}px;background-size:${hour}px 100%">${h}</div></div>`;
+  }).join('');
+  return `${tray}<div class="grid" style="width:calc(var(--lab) + ${laneW}px)"><div class="ruler"><div class="corner">TECH</div><div class="ticks" style="width:${laneW}px">${ticks}</div></div>${rows}</div>
+  <div class="key"><span><i class="sw" style="background:var(--t0);opacity:.7"></i>When the tech is really there, using the booking chart</span><span><i class="sw" style="background:repeating-linear-gradient(135deg,var(--bad) 0 3px,transparent 3px 6px)"></i>Runs past what's booked</span><span><i class="sw" style="background:var(--window)"></i>Customer's arrival window</span><span>Tap a tech's name for skills and blocks</span></div>`;
+}
+
+function renderMap(ev){
+  const ctx = S.ctx, W = 360, H = 440, pad = 30, mkt = S.sc.market;
+  const pts = [ctx.shop].concat(ctx.jobs.map(j => [j.lat, j.lon]));
+  const mid = pts.reduce((s, p) => s + p[0], 0)/pts.length, kx = Math.cos(mid*Math.PI/180);
+  const X = p => p[1]*kx, Y = p => -p[0];
+  const x0 = Math.min(...pts.map(X)), x1 = Math.max(...pts.map(X)), y0 = Math.min(...pts.map(Y)), y1 = Math.max(...pts.map(Y));
+  const k = Math.min((W - 2*pad)/Math.max(1e-6, x1 - x0), (H - 2*pad)/Math.max(1e-6, y1 - y0));
+  const ox = (W - (x1 - x0)*k)/2, oy = (H - (y1 - y0)*k)/2;
+  const P = p => [ox + (X(p) - x0)*k, oy + (Y(p) - y0)*k];
+  const m = B.model[mkt], [sx, sy] = P(ctx.shop);
+  let svg = `<rect width="${W}" height="${H}" fill="var(--surface)"/>`;
+  for (const mm of [30, 45, 60]){ const km = Math.pow(Math.max(0, (mm - m.a)/m.b), 1/m.p), r = km*k/111.32; svg += `<circle class="m-ring" cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${r.toFixed(1)}"/><text class="m-ringl" x="${(sx + r*0.72 + 3).toFixed(1)}" y="${(sy - r*0.70).toFixed(1)}">${mm} min</text>`; }
+  const placed = [];
+  B.zones.filter(z => z.m === mkt).sort((a, b) => b.jobs - a.jobs).forEach(z => {
+    if (placed.length >= 14) return; const [cx, cy] = P([z.lat, z.lon]);
+    if (cx < 12 || cx > W - 12 || cy < 12 || cy > H - 12) return;
+    if (placed.some(q => Math.abs(q[0] - cx) < 46 && Math.abs(q[1] - cy) < 16)) return;
+    placed.push([cx, cy]); svg += `<circle class="m-cdot" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="1.6"/><text class="m-city" x="${cx.toFixed(1)}" y="${(cy + 12).toFixed(1)}" text-anchor="middle">${esc(z.city)}</text>`;
+  });
+  for (const t of ctx.techs){
+    const pt = ev.perTech[t.id]; if (!pt || !pt.seq.length) continue;
+    const lead = [ctx.shop].concat(pt.seq.map(s => [s.job.lat, s.job.lon])).concat([ctx.shop]).map(P).map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ');
+    svg += `<polyline class="m-route${pt.seq.every(s => !s.lead) ? ' help' : ''}" points="${lead}" style="stroke:${tcol(t)}"/>`;
+  }
+  svg += `<rect class="m-shop" x="${(sx - 7).toFixed(1)}" y="${(sy - 7).toFixed(1)}" width="14" height="14" rx="3"/><text class="m-shopl" x="${(sx + 11).toFixed(1)}" y="${(sy + 4).toFixed(1)}">SHOP</text>`;
+  const lostSet = new Set(ev.lost.map(l => l.job));
+  for (const j of ctx.jobs){
+    const [cx, cy] = P([j.lat, j.lon]), a = S.assign[j.id], t = a.tech ? ctx.tById[a.tech] : null, un = lostSet.has(j.id);
+    svg += `<g class="m-pin${un ? ' un' : ''}" data-act="job" data-id="${j.id}" role="button" tabindex="0" aria-label="${esc(j.id + ' ' + j.city)}"><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="10" style="fill:${tcol(t)}"/><text x="${cx.toFixed(1)}" y="${(cy + 3).toFixed(1)}" text-anchor="middle">${j.id.slice(1)}</text></g>`;
+  }
+  const legend = ctx.techs.map(t => { const pt = ev.perTech[t.id], out = ctx.unavailable.has(t.id); const n = pt ? pt.seq.filter(s => s.lead).length : 0; return `<button class="lg" data-act="tech" data-id="${t.id}"><i class="dot" style="--tc:${tcol(t)}"></i><span><b>${esc(t.name)}</b> ${out ? 'called out' : `${n} job${n === 1 ? '' : 's'} · ${dur(pt ? pt.drive : 0)} driving`}</span></button>`; }).join('');
+  return `<div class="mapwrap"><svg class="map" viewBox="0 0 ${W} ${H}" role="img" aria-label="Map of today's jobs and routes from the ${esc(B.markets[mkt].shopName)}">${svg}</svg>
+    <p class="foot" style="margin:8px 2px 0">Dashed rings are drive time from the shop. Lines follow each tech's booked order. Tap a pin to open the job.</p>
+    <div class="legend">${legend}</div></div>`;
+}
+
+function renderPrompts(){
+  const cards = S.sc.prompts.map(p => { const done = !!S.handled[p.id]; return `<article class="pcard${done ? ' done' : ''}"><div class="pfrom">${esc(p.from)}</div><h3>${esc(p.title)}</h3><p>${esc(p.body)}</p><div class="prow">${p.jobs.map(id => `<button class="pjob" data-act="job" data-id="${id}">${id} · ${esc(S.ctx.jById[id].city)}</button>`).join('')}<button class="check" data-act="handled" data-p="${p.id}" aria-pressed="${done}">${done ? 'Handled ✓' : 'Mark handled'}</button></div></article>`; }).join('');
+  return `<div class="stack"><div class="intro"><b>Tomorrow's board, as it was really booked.</b> Work each prompt, then keep going. Routing and booking lengths across the whole board count too, not just the prompt jobs.</div>${cards}</div>`;
+}
+
+function chartTable(title, note, rowLabels, getRow, tbl, onCols){
+  const keys = ['std'].concat(Object.keys(tbl).filter(x => x !== 'std'));
+  return `<section class="chead"><h3>${title}</h3>${note ? `<p>${note}</p>` : ''}<div class="tscroll"><table><thead><tr><th>${rowLabels[0]}</th>${keys.map(c => `<th class="${onCols.has(c) ? 'on' : ''}">${COLNAME[c] || c}</th>`).join('')}</tr></thead><tbody>${rowLabels.slice(1).map((lab, i) => `<tr><td>${lab}</td>${keys.map(c => `<td class="${onCols.has(c) ? 'on' : ''}">${getRow(tbl[c], i)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></section>`;
+}
+function renderChart(){
+  const sc = S.sc, mkt = sc.market, cats = new Set(sc.jobs.map(j => j.cat)), on = new Set(S.ctx.techs.map(t => t.chart));
+  const carpet = ['carpet','wood','carpetcom'].some(c => cats.has(c)), duct = ['duct','dv','ductcom'].some(c => cats.has(c));
+  let html = `<div class="intro"><b>Booking chart, August 2026.</b> On-site hours to book, rebuilt from ServiceTitan clock-in data. When you know who's taking the job, use that tech's column. Highlighted columns are techs on this board.</div>`;
+  const h = v => v == null ? '–' : v;
+  if (carpet && mkt === 'WA'){
+    html += chartTable('Carpet · hours by area count', '', ['Areas','1','2','3','4','5','6','7','8','9','10'], (col, i) => h(col[i]), WA_AREAS, on);
+    const kinds = ['furniture','tile','rug','wood','commercial'], labels = ['Job','Furniture (whole job)','Tile & grout','Area rugs in home','Hardwood','Commercial'];
+    const pivot = {}; Object.keys(WA_OTHER.furniture).forEach(c => { pivot[c] = kinds.map(k => WA_OTHER[k][c]); });
+    html += chartTable('Other carpet work', '', labels, (col, i) => h(col[i]), pivot, on);
+  }
+  if (carpet && mkt === 'AZ'){
+    const kinds = [0,1,2], pivot = {}; Object.keys(AZ_AREAS).forEach(c => { pivot[c] = AZ_AREAS[c].concat([AZ_OTHER.furniture[c], AZ_OTHER.tile[c], AZ_OTHER.rug[c]]); });
+    html += chartTable('Arizona carpet &amp; tile', '', ['Job','3 areas','4 areas','5 areas','Furniture (whole job)','Tile & grout','Area rug in home'], (col, i) => h(col[i]), pivot, on);
+  }
+  if (carpet){
+    html += `<section class="chead"><h3>Furniture per piece</h3><p>Use for furniture-only jobs. On combo jobs, add piece time to the area row.</p><div class="tscroll"><table><tbody>${[['Standard sofa','45 min'],['L-shape sectional','1 hr 20 min'],['U-shape sectional','1 hr 30 min'],['Loveseat','30 min'],['Full chair','20 min'],['Dining chair','5–10 min each']].map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</tbody></table></div></section>
+    <section class="chead"><h3>Combo jobs (drill rule)</h3><p>Carpet plus furniture: area row plus furniture piece time. Tile, in-home rugs or hardwood under 150 sq ft on a carpet job: add 30 minutes. Bigger than that: add that job's whole row. Round up to the half hour.</p></section>`;
+  }
+  if (duct){
+    const bandsWA = ['Sq ft','0–1,500','1,501–2,000','2,001–2,500','2,501–3,000','3,001–3,500','3,501–4,000','4,001–4,500'];
+    if (mkt === 'WA'){
+      html += chartTable('WA duct · Essential', '', bandsWA.slice(0, 7), (col, i) => h(col[i]), WA_ESS, on);
+      html += chartTable('WA duct · Diamond', 'Diamond runs about 30 minutes longer at every size. Book them separately.', bandsWA, (col, i) => h(col[i]), WA_DIA, on);
+    } else {
+      html += chartTable('AZ duct · Essential', '', bandsWA.slice(0, 5), (col, i) => h(col[i]), AZ_ESS, on);
+      html += chartTable('AZ duct · Diamond', 'AZ runs furthest over. Book off this table even if it feels long.', bandsWA.slice(0, 6), (col, i) => h(col[i]), AZ_DIA, on);
+    }
+    html += `<section class="chead"><h3>Dryer vents, estimates, redos</h3><div class="tscroll"><table><tbody>${(mkt === 'WA' ? [['Dryer vent under 10 ft','1 hr'],['Dryer vent over 10 ft','1 hr 30 min']] : [['Dryer vent under 10 ft','1 hr 30 min']]).concat([['Estimate (residential or commercial)','1 hr'],['Redo / recall (hourly tech)','1 hr 30 min']]).map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</tbody></table></div></section>`;
+  }
+  const zs = B.zones.filter(z => z.m === mkt).sort((a, b) => a.minutes - b.minutes);
+  html += `<section class="chead"><h3>Drive time from the ${esc(B.markets[mkt].shopName)}</h3><p>Morning drive from the shop. "Tech drives" means the median of real clocked drives; "estimate" means the drive model filled in a city with fewer than 5 of them.</p><div class="tscroll"><table><thead><tr><th>City</th><th>Minutes</th><th>Band</th><th>Zone</th><th>Source</th></tr></thead><tbody>${zs.map(z => `<tr><td>${esc(z.city)}</td><td>${z.minutes}</td><td>${esc(z.band)}</td><td>${esc(z.sector)}</td><td class="src">${z.source === 'tech drives' ? 'tech drives' : 'estimate'}</td></tr>`).join('')}</tbody></table></div></section>`;
+  html += `<section class="rules">${rulesHtml()}</section>`;
+  return `<div class="stack">${html}</div>`;
+}
+
+/* ---------- sheet ---------- */
+function openJob(id){ S.sheet = {job: id}; renderGame(); }
+function closeSheet(silent){ if (S) S.sheet = null; $('#sheet').hidden = true; $('#sheetBack').hidden = true; if (!silent && S) renderGame(); }
+function renderSheet(){
+  const sh = $('#sheet'), back = $('#sheetBack');
+  if (!S || !S.sheet){ sh.hidden = true; back.hidden = true; return; }
+  const top = sh.hidden ? 0 : sh.scrollTop;
+  sh.innerHTML = S.sheet.job ? jobSheet(S.sheet.job) : techSheet(S.sheet.tech);
+  sh.hidden = false; back.hidden = false; sh.scrollTop = top;
+}
+function priorJob(tid, j){
+  let prev = null;
+  for (const k of S.ctx.jobs){ if (k.id === j.id) continue; const b = S.assign[k.id]; if (b.tech !== tid && b.helper !== tid) continue; if (b.start <= S.assign[j.id].start && (!prev || b.start > S.assign[prev.id].start)) prev = k; }
+  return prev;
+}
+function fitAfter(id){
+  const ctx = S.ctx, j = ctx.jById[id], a = S.assign[id]; if (!a.tech) return a.start;
+  const prev = priorJob(a.tech, j);
+  const earliest = prev ? S.assign[prev.id].start + S.assign[prev.id].dur + ctx.dm[prev._i][j._i] : DEPART + ctx.dm[0][j._i];
+  return clamp(Math.max(j.win[0], Math.ceil(earliest/15)*15), DAY0, DAY1 - 30);
+}
+function jobSheet(id){
+  const ctx = S.ctx, ev = S.ev, j = ctx.jById[id], a = S.assign[id], lead = a.tech ? ctx.tById[a.tech] : null, out = lead && ctx.unavailable.has(lead.id);
+  const r = ev.recs[id];
+  let status;
+  if (!lead) status = `<div class="status bad"><span>No tech going out</span><b>Lost job</b></div>`;
+  else if (out) status = `<div class="status bad"><span>${esc(lead.name)} called out</span><b>Lost job</b></div>`;
+  else { const promised = a.start > j.win[1] ? a.start : j.win[1], isLate = r.arr > promised + 5; status = `<div class="status${isLate ? ' bad' : ''}"><span>${esc(lead.name)} gets there</span><b>${clock(r.arr)}${isLate ? ` · ${dur(r.arr - promised)} late` : ''}</b></div>`; }
+  const tags = j.tags.map(t => `<span class="tag${HOT_TAGS.includes(t) ? ' hot' : ''}">${esc((TAGS[t] || [t])[0])}</span>`).join('');
+  const have = lead ? new Set(lead.skills.concat(lead.implied)) : null;
+  const req = j.req.map(x => have ? `<span class="tag ${have.has(x) ? 'ok' : 'hot'}">${have.has(x) ? '✓' : '✗'} ${esc(x)}</span>` : `<span class="tag">${esc(x)}</span>`).join('');
+  const equip = []; if (j.tags.includes('! NO WATER HOOK UP')) equip.push('Water on the truck'); if (j.tags.includes('! Portable')) equip.push('Portable setup'); if (j.scope.crb) equip.push('CRB machine'); if (j.commercialCustomer || j.cat === 'carpetcom' || j.cat === 'ductcom') equip.push('Commercial customer');
+  const techChips = ctx.techs.map(t => {
+    const tout = ctx.unavailable.has(t.id), hv = new Set(t.skills.concat(t.implied)), miss = j.req.filter(x => !hv.has(x));
+    const prev = priorJob(t.id, j), d = prev ? `${ctx.dm[prev._i][j._i]}m from ${prev.city}` : `${ctx.dm[0][j._i]}m from shop`;
+    return `<button class="tchip" style="--tc:${tcol(t)}" data-act="assign" data-tech="${t.id}" aria-pressed="${a.tech === t.id}"${tout ? ' disabled' : ''}><b>${esc(t.name)}</b><span class="${miss.length ? 'no' : 'yes'}">${tout ? 'Called out' : miss.length ? `✗ missing ${miss.length}` : '✓ has skills'}</span><span>${tout ? '&nbsp;' : esc(d)}</span></button>`;
+  }).join('') + `<button class="tchip" style="--tc:var(--bad)" data-act="assign" data-tech="" aria-pressed="${!a.tech}"><b>Unassign</b><span>Leaves it in the tray</span><span>&nbsp;</span></button>`;
+  const helperChips = `<button class="tchip slim" style="--tc:var(--line)" data-act="helper" data-tech="" aria-pressed="${!a.helper}"><b>None</b></button>` + ctx.techs.filter(t => t.id !== a.tech).map(t => `<button class="tchip slim" style="--tc:${tcol(t)}" data-act="helper" data-tech="${t.id}" aria-pressed="${a.helper === t.id}"${ctx.unavailable.has(t.id) ? ' disabled' : ''}><b>${esc(t.name)}</b></button>`).join('');
+  return `<div class="grab"><div class="sh-t"><h3>${esc(j.customer)}</h3><div>${j.id} · ${esc(j.city)} · ${esc(j.type)}${j.invoice ? ` · $${j.invoice.toLocaleString()} invoiced` : ''}</div></div><button class="iconbtn" data-act="close" aria-label="Close">×</button></div>
+  <div class="sec">${status}<div class="kv"><span>Arrival window</span><b>${clock(j.win[0])} – ${clock(j.win[1])}</b></div>${tags ? `<div class="tagrow">${tags}</div>` : ''}${j.training ? `<div class="note"><b>Job summary</b>${esc(j.training.text)}</div>` : ''}</div>
+  <div class="sec" style="--tc:${tcol(lead)}"><h4>${j.isNew ? 'Booked work' : 'Invoiced work'}</h4><ul class="lines">${j.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul></div>
+  <div class="sec"><h4>Needs</h4><div class="tagrow">${req}${equip.map(e => `<span class="tag">${esc(e)}</span>`).join('')}</div></div>
+  <div class="sec"><h4>Tech</h4><div class="chips">${techChips}</div></div>
+  <div class="sec"><h4>Ride-along trainer <span>optional</span></h4><div class="chips">${helperChips}</div></div>
+  <div class="sec"><h4>Start time</h4><div class="stepper"><button data-act="start" data-d="-15" aria-label="15 minutes earlier">−15</button><output>${clock(a.start)}</output><button data-act="start" data-d="15" aria-label="15 minutes later">+15</button></div>
+    <div class="minis"><button class="mini" data-act="fit">After previous job</button><button class="mini" data-act="winstart">Window start</button></div></div>
+  <div class="sec"><h4>Booked length <button class="linkbtn" data-act="tab" data-v="chart">Booking chart</button></h4><div class="stepper"><button data-act="dur" data-d="-30" aria-label="30 minutes shorter">−30</button><output>${dur(a.dur)}</output><button data-act="dur" data-d="30" aria-label="30 minutes longer">+30</button></div></div>`;
+}
+function techSheet(id){
+  const t = S.ctx.tById[id], pt = S.ev.perTech[id], out = S.ctx.unavailable.has(id);
+  const payNote = {Commission:'Commission-only. A gap is money out of their pocket, so fill their board first and keep redos and no-charge work off it.', Hourly:'Hourly. Paid either way, so this is the place for filler, redos, commercial and low-ticket work.', Salary:'Salary. Estimates, commercial and rescues.'}[t.pay] || '';
+  const rules = [];
+  if (t.maxJobs) rules.push(`Board blocked at ${t.maxJobs} jobs a day.`);
+  if (t.hardStop) rules.push(`${t.hardStop.label}.`);
+  if ((t.rules || []).includes('residential_only')) rules.push('Residential only. No commercial, HOA, condo or property-management carpet.');
+  (t.notes || []).forEach(n => rules.push(n));
+  const blocks = t.blocks.map(b => `<li>${clock(b.start)}–${clock(b.end)} · ${esc(b.label)}</li>`).join('');
+  const n = pt ? pt.seq.filter(s => s.lead).length : 0;
+  return `<div class="grab" style="--tc:${tcol(t)}"><div class="sh-t"><h3>${esc(t.full || t.name)}</h3><div>${esc(t.title)} · ${esc(t.pay).toUpperCase()}</div></div><button class="iconbtn" data-act="close" aria-label="Close">×</button></div>
+  <div class="sec"><div class="kv"><span>Today</span><b>${out ? 'Called out' : `${n} job${n === 1 ? '' : 's'} · ${dur(pt ? pt.drive : 0)} driving`}</b></div>${pt && pt.lastEnd ? `<div class="kv"><span>Last job wraps</span><b>${clock(pt.lastEnd)}</b></div>` : ''}<div class="kv"><span>Booking chart column</span><b>${COLNAME[t.chart] || 'Standard'}</b></div><p style="margin:6px 0 0;color:var(--ink-2);font-size:14px">${payNote}</p></div>
+  <div class="sec"><h4>Skills in ServiceTitan</h4><div class="tagrow">${t.skills.map(s => `<span class="tag">${esc(s)}</span>`).join('') || '<span class="tag dim">None listed</span>'}${t.implied.map(s => `<span class="tag dim">${esc(s)} · from department</span>`).join('')}</div></div>
+  <div class="sec"><h4>Truck &amp; equipment</h4><div class="tagrow"><span class="tag ${t.water ? 'ok' : ''}">${t.water ? '✓ Water on board' : 'No water on truck'}</span><span class="tag ${t.portable ? 'ok' : ''}">${t.portable ? '✓ Portable-capable' : 'No portable work'}</span><span class="tag ${t.crb ? 'ok' : ''}">${t.crb ? '✓ CRB machine' : 'No CRB machine'}</span></div>${t.truck ? `<p style="margin:8px 0 0;font:500 11px var(--f-mono);color:var(--muted)">Dispatch team: ${esc(t.truck)}</p>` : ''}</div>
+  ${rules.length ? `<div class="sec"><h4>Standing rules</h4><ul class="plist">${rules.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
+  <div class="sec"><h4>Dispatch blocks today</h4>${blocks ? `<ul class="plist">${blocks}</ul>` : '<p style="margin:0;color:var(--ink-2)">None.</p>'}</div>`;
+}
+
+/* ---------- results ---------- */
+async function lock(){
+  closeSheet(true);
+  show('results'); window.scrollTo(0, 0);
+  $('#results').innerHTML = `<div class="res"><p class="eyebrow">${esc(S.sc.title)} · ${esc(S.sc.dateLabel)}</p><div class="verdict">Scoring your board…</div><p>Finding the best board for this day to score against. This takes a few seconds the first time.</p></div>`;
+  const bench = await S.benchP; renderResults(bench);
+}
+function renderResults(bench){
+  const ctx = S.ctx, ev = evaluate(ctx, S.assign), bd = bench.ev, sc = scoreOf(ev, bd), booked = evaluate(ctx, initialAssign(S.sc), true);
+  S.lastScore = sc; S.lastEv = ev;
+  if (!S.revealed){ const k = 'dd-best-' + S.sc.id, prev = store.get(k, null); if (prev == null || sc.total > prev) store.set(k, sc.total); }
+  const verdict = sc.zero ? 'Lost job' : sc.total >= 90 ? 'Dispatch ready' : sc.total >= 75 ? 'Solid board' : sc.total >= 50 ? 'Needs a second look' : 'Rebuild this board';
+  const bar = (label, v, max) => `<div class="bar"><label>${label}</label><div class="track"><div class="fill" style="width:${(100*v/max).toFixed(0)}%"></div></div><output>${v}<small>/${max}</small></output></div>`;
+  const item = i => `<div class="di${i.pts >= 0 ? ' good' : ''}"><b>${i.pts >= 0 ? '✓' : i.pts}</b><div><p>${esc(i.text)}</p>${i.job ? `<button class="linkbtn" data-act="gojob" data-id="${i.job}">Show ${i.job} on the board</button>` : i.tech ? `<button class="linkbtn" data-act="gotech" data-id="${i.tech}">Open ${esc(ctx.tById[i.tech].name)}'s day</button>` : ''}</div></div>`;
+  const skills = ev.items.filter(i => i.k === 'skills' && i.pts < 0), sop = ev.items.filter(i => i.k === 'sop' && i.pts < 0), goods = ev.items.filter(i => i.pts >= 0);
+  const pct = Math.round(100*sc.over);
+  const routingLine = ev.driveTotal <= bd.driveTotal ? `Your techs drive ${dur(ev.driveTotal)}, as tight as the best board found.` : `Your techs drive ${dur(ev.driveTotal)}. That's ${pct}% more than the best board found (${dur(bd.driveTotal)}).`;
+  const crossLine = S.sc.market === 'WA' ? ` Zone crossings: yours ${ev.crossings}, best board ${bd.crossings}.` : '';
+  const carry = (bd.skillsDed || bd.sopDed) ? `<p>The best board for this day still carries −${bd.skillsDed} in skills and −${bd.sopDed} in SOP. Some problems can't be fixed today, so you're only charged past that.</p>` : '';
+  const name = store.get('dd-name', '');
+  const opts = ['<option value="">Pick your name</option>'].concat(CCRS.map(n => `<option${n === name ? ' selected' : ''}>${esc(n)}</option>`)).join('');
+  $('#results').innerHTML = `${S.revealed ? '<div class="banner">You opened the best board on this attempt, so this score won\'t post.</div>' : ''}<div class="res">
+    <div class="rtop"><button class="btn" data-act="back">‹ Keep editing</button><p class="eyebrow">${esc(S.sc.title)} · ${esc(S.sc.dateLabel)}</p></div>
+    <div><div class="score"><b>${sc.total}</b><span>/ 100</span></div><div class="verdict${sc.zero || sc.total < 50 ? ' bad' : ''}">${verdict}</div></div>
+    ${sc.zero ? `<div class="zero"><b>A job has no tech going out, so the board scores 0.</b>${ev.lost.map(l => `<p>${l.job} · ${esc(ctx.jById[l.job].city)}: ${esc(l.why)}. <button class="linkbtn" data-act="gojob" data-id="${l.job}">Fix it</button></p>`).join('')}</div>` : ''}
+    <div class="bars">${bar('Routing', sc.routing, 40)}${bar('Skills', sc.skills, 30)}${bar('SOP &amp; timing', sc.sop, 30)}</div>
+    <div class="cmp"><div class="cmpi you"><span>Your board</span><b>${dur(ev.driveTotal)}</b></div><div class="cmpi"><span>As booked</span><b>${dur(booked.driveTotal)}</b></div><div class="cmpi"><span>Best found</span><b>${dur(bd.driveTotal)}</b></div></div>
+    <section class="rsec"><h3>Routing</h3><p>${routingLine}${crossLine}</p></section>
+    ${skills.length ? `<section class="rsec"><h3>Skills &amp; equipment</h3><div class="ded">${skills.map(item).join('')}</div></section>` : ''}
+    ${sop.length ? `<section class="rsec"><h3>SOP &amp; timing</h3>${carry}<div class="ded">${sop.map(item).join('')}</div></section>` : (carry ? `<section class="rsec"><h3>SOP &amp; timing</h3>${carry}</section>` : '')}
+    ${goods.length ? `<section class="rsec"><h3>Done right</h3><div class="ded">${goods.map(item).join('')}</div></section>` : ''}
+    <section class="rsec"><h3>Leaderboard</h3>
+      ${S.revealed ? '<p>Reset the board to play for a score that posts.</p>' : `<div class="post"><select id="who2" aria-label="Your name">${opts}</select><button class="btn" data-act="post" id="postBtn"${S.posted ? ' disabled' : ''}>${S.posted ? 'Posted' : 'Post score'}</button></div>`}
+      <div class="lb" id="lb"><p class="lbempty">Loading scores…</p></div></section>
+    <div class="ractions"><button class="btn" data-act="reveal">Show the best board</button><button class="btn" data-act="reset" id="resetBtn2">Reset and replay</button></div>
+  </div>`;
+  loadLeaderboard();
+}
+async function loadLeaderboard(){
+  const el = $('#lb'); if (!el) return;
+  const best = store.get('dd-best-' + S.sc.id, null);
+  const db = await getDb();
+  if (!db){ el.innerHTML = `<p class="lbempty">The team leaderboard isn't available in this view. Your best on this phone: ${best == null ? '–' : best}.</p>`; return; }
+  try {
+    const snap = await db.collection('scores').where('scenario', '==', S.sc.id).orderBy('score', 'desc').limit(10).get();
+    if (snap.empty){ el.innerHTML = '<p class="lbempty">No scores posted yet. Be the first.</p>'; return; }
+    el.innerHTML = snap.docs.map((d, i) => { const x = d.data() || {}; return `<div class="lbr"><i>${i + 1}</i><div>${esc(x.name || 'Unnamed')}<small>Routing ${x.routing ?? '–'} · Skills ${x.skills ?? '–'} · SOP ${x.sop ?? '–'}</small></div><b>${esc(x.score)}</b></div>`; }).join('');
+  } catch (e){ el.innerHTML = '<p class="lbempty">Scores couldn\'t load right now. Try again in a minute.</p>'; }
+}
+async function postScore(){
+  const sel = $('#who2'), name = sel ? sel.value : '', btn = $('#postBtn');
+  if (!name){ if (sel) sel.focus(); btn.textContent = 'Pick your name first'; return; }
+  store.set('dd-name', name);
+  const db = await getDb();
+  if (!db){ btn.textContent = 'Leaderboard unavailable'; btn.disabled = true; return; }
+  const sc = S.lastScore, ev = S.lastEv;
+  const rec = {name, scenario: S.sc.id, score: sc.total, routing: sc.routing, skills: sc.skills, sop: sc.sop, driveMin: ev.driveTotal, at: new Date().toISOString(), v: 1};
+  btn.disabled = true; btn.textContent = 'Posting…';
+  const tryAdd = () => db.collection('scores').add(rec);
+  try { await tryAdd(); }
+  catch (e){
+    if (e && e.code === 'unavailable'){ await new Promise(r => setTimeout(r, 600 + Math.random()*800)); try { await tryAdd(); } catch (e2){ btn.disabled = false; btn.textContent = 'Couldn\'t post. Try again'; return; } }
+    else { btn.disabled = false; btn.textContent = e && e.code === 'quota_exceeded' ? 'Leaderboard is full' : 'Couldn\'t post. Try again'; return; }
+  }
+  S.posted = true; btn.textContent = 'Posted'; loadLeaderboard();
+}
+
+/* ---------- events ---------- */
+function resetBoard(){
+  store.del('dd-assign-' + S.sc.id); store.del('dd-revealed-' + S.sc.id); store.del('dd-handled-' + S.sc.id);
+  S.assign = initialAssign(S.sc); S.revealed = false; S.handled = {}; S.posted = false; S.sheet = null;
+}
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const act = el.dataset.act, id = el.dataset.id;
+  const cur = S && S.sheet && S.sheet.job ? S.assign[S.sheet.job] : null;
+  switch (act){
+    case 'play': play(id); break;
+    case 'home': S = null; show('home'); renderHome(); window.scrollTo(0, 0); break;
+    case 'tab': S.view = el.dataset.v; S.sheet = null; renderGame(); break;
+    case 'job': openJob(id); break;
+    case 'tech': S.sheet = {tech: id}; renderSheet(); break;
+    case 'close': closeSheet(false); break;
+    case 'assign': if (cur){ const tid = el.dataset.tech || null; cur.tech = tid; if (cur.helper === tid) cur.helper = null; commit(); } break;
+    case 'helper': if (cur){ cur.helper = el.dataset.tech || null; commit(); } break;
+    case 'start': if (cur){ cur.start = clamp(cur.start + Number(el.dataset.d), DAY0, DAY1 - 30); commit(); } break;
+    case 'dur': if (cur){ cur.dur = clamp(cur.dur + Number(el.dataset.d), 30, 720); commit(); } break;
+    case 'fit': if (cur){ cur.start = fitAfter(S.sheet.job); commit(); } break;
+    case 'winstart': if (cur){ cur.start = S.ctx.jById[S.sheet.job].win[0]; commit(); } break;
+    case 'handled': S.handled[el.dataset.p] = !S.handled[el.dataset.p]; store.set('dd-handled-' + S.sc.id, S.handled); renderGame(); break;
+    case 'lock': lock(); break;
+    case 'back': show('game'); renderGame(); break;
+    case 'gojob': show('game'); S.view = 'board'; openJob(id); break;
+    case 'gotech': show('game'); S.view = 'board'; S.sheet = {tech: id}; renderGame(); break;
+    case 'reveal': S.benchP.then(b => { S.assign = JSON.parse(JSON.stringify(b.assign)); S.revealed = true; store.set('dd-revealed-' + S.sc.id, true); store.set('dd-assign-' + S.sc.id, S.assign); show('game'); S.view = 'board'; renderGame(); }); break;
+    case 'reset':
+      if (el.dataset.armed !== '1'){ el.dataset.armed = '1'; el.textContent = 'Tap again to reset'; setTimeout(() => { if (el.isConnected){ el.dataset.armed = ''; el.textContent = el.id === 'resetBtn2' ? 'Reset and replay' : 'Reset'; } }, 3000); break; }
+      el.dataset.armed = ''; resetBoard(); show('game'); S.view = 'board'; renderGame(); break;
+    case 'post': postScore(); break;
+  }
+});
+document.addEventListener('change', e => { if (e.target.id === 'who' || e.target.id === 'who2') store.set('dd-name', e.target.value); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && S && S.sheet) closeSheet(false);
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.classList && e.target.classList.contains('m-pin')){ e.preventDefault(); openJob(e.target.dataset.id); }
+});
+
+renderHome();
+})();
+</script>
+
+</body></html>
